@@ -1,8 +1,12 @@
 /*
-* Description: String processing in C. 
-* 		1. Takes input from the console using "getline()".
-* 		2. Tokenizes the input string and displays each individual
-* 		   token on stdout.
+* Description: 
+*	
+*	--String Processing in C using file I/0--
+*
+* 		1. Take input from .txt file containing a list of bash commands
+* 		   (or any string really)
+* 		2. Tokenize each line from the input file and write each
+* 		   individual token to an output .txt file
 *
 * Author: Alex Brown
 *
@@ -34,17 +38,38 @@ void main(int argc, char* argv[]) {
 	inBufferPtr = (char*) malloc(bufferSize * sizeof(char));
 	savePtr = (char**) malloc(sizeof(char*));
 
-	/*main run loop*/
-	while (CONTINUE){
+	// Init input and output file names
+	char* inFileName = argv[1];
+	char* outFileName = argv[2];
 
-		/* Print >>> then get the input string */
-		fprintf(stdout, ">>> ");
-		getline(&inBufferPtr, &bufferSize, stdin);
+	// Attempt to open input file
+	FILE* inFilePointer = fopen(inFileName, "r");
+
+	// Check if input file exists, exit otherwise
+	if(inFilePointer == NULL){
+		fprintf(stderr, "fopen() failed to open file %s", inFileName);
+		exit(EXIT_FAILURE);
+	}
+
+	// Attempt to open output file
+	FILE* outFilePointer = fopen(outFileName, "w");
+
+	// Check if output file exists, exit otherwise
+	if(outFilePointer == NULL){
+		fprintf(stderr, "fopen() failed to open file %s", outFileName);
+		exit(EXIT_FAILURE);
+	}
+
+	// get input from input file line by line until there are no more lines
+	while(getline(&inBufferPtr, &bufferSize, inFilePointer) != -1){
+
+		// Strip null character from end of buffer and save current Buffer to savePtr
 		inBufferPtr[strlen(inBufferPtr) - 1] = 0;
 		*savePtr = inBufferPtr;
 
+		// Check if current buffer is empty
 		if(strlen(inBufferPtr) > 0){
-			fprintf(stdout, "\n");	
+			fprintf(outFilePointer, "\n");
 		}
 
 		/* Tokenize the input string */
@@ -54,18 +79,24 @@ void main(int argc, char* argv[]) {
 
 			// If the user entered <exit> then exit both loops
 			if(strcmp(token, "exit") == 0){
-				CONTINUE = 0;
 				break;
 
 			}else if(strcmp(token, "\n") == 0){
 				break;
 
 			}else{
-				fprintf(stdout, "T%i: %s\n", i, token);
+				fprintf(outFilePointer, "T%i: %s\n", i, token);
 				i++;
 			}
 		}
+
 	}
+
+
+	// Close file pointers
+	fclose(inFilePointer);
+	fclose(outFilePointer);
+
 	/*Free the allocated memory*/
 	free(inBufferPtr);
 	free(savePtr);
