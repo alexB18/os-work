@@ -56,7 +56,7 @@ int usage(int argc, char** argv)
 
 		} else {
 			fprintf(stderr, 
-                "usage: %s <input file 1> <input file 2> <output file>\n", 
+                "usage: %s <flag> <input file>\n", 
                 argv[0]);
         	exit(EXIT_FAILURE);
 		}
@@ -66,7 +66,7 @@ int usage(int argc, char** argv)
 	} else {
 
 		fprintf(stderr, 
-                "usage: %s <input file 1> <input file 2> <output file>\n", 
+                "usage: %s <flag> <input file>\n", 
                 argv[0]);
         exit(EXIT_FAILURE);
 
