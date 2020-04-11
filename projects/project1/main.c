@@ -42,9 +42,7 @@ int usage(int argc, char** argv)
 	
 	// if pseudo-shell is being run with *exactly* one argument (./pseudo-shell),
 	// then we're in "interactive mode"
-	if(argc == 1){
-		return 0;
-	}
+	if(argc == 1){return 0;}
 
 	// else if pseudo-shell is being run with two arguments, we could be in file mode,
 	// and must further validate
