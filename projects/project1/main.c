@@ -18,9 +18,70 @@
 #include <string.h>
 /*---------------------------------------------------------------------------*/
 
+// 0 -> interactive mode
+// 1 -> file mode
+int MODE;  
+
+
+/* This function checks the input parameters to the program to make 
+   sure they are correct. If the number of input parameters is incorrect, or 
+   if inproper parameters are used, it prints out a message on how to properly use the program.
+
+   returns an int corresponding to the running mode of ./pseudo-shell
+   0 --> interactive mode
+   1 --> file mode
+
+   input parameters:
+       int    argc
+       char** argv 
+    return parameters:
+       int
+ */
+int usage(int argc, char** argv)
+{
+	
+	// if pseudo-shell is being run with *exactly* one argument (./pseudo-shell),
+	// then we're in "interactive mode"
+	if(argc == 1){
+		return 0;
+	}
+
+	// else if pseudo-shell is being run with two arguments, we could be in file mode,
+	// and must further validate
+    else if(argc == 3){
+
+		// so, we need to make sure that the correct arguments are included
+		// we also need to check that there are no more than 2 parameters
+
+		if(strcmp(argv[1], "-f") == 0){
+			return 1;
+
+		} else {
+			fprintf(stderr, 
+                "usage: %s <input file 1> <input file 2> <output file>\n", 
+                argv[0]);
+        	exit(EXIT_FAILURE);
+		}
+
+    
+	// else, the usage is incorrect
+	} else {
+
+		fprintf(stderr, 
+                "usage: %s <input file 1> <input file 2> <output file>\n", 
+                argv[0]);
+        exit(EXIT_FAILURE);
+
+	}
+}
+
 /*-----------------------------Program Main----------------------------------*/
 int main(int argc, char* argv[]) {
 	setbuf(stdout, NULL);
+
+	// check usage and set appropriate mode
+	MODE = usage(argc, argv);
+	fprintf(stdout, "Mode: %i\n", MODE);
 
 	/* Main Function Variables */
 	int CONTINUE = 1;
