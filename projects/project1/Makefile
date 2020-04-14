@@ -46,7 +46,7 @@ main.o:  main.c
 # files and *~ backup files:
 #
 clean: 
-	$(RM) pseudo-shell log.txt *.o *~
+	$(RM) pseudo-shell log.txt output.txt *.o *~
 
 # To run valgrind, type 'make val'
 # Valgrind will run a leak check and store the
