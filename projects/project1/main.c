@@ -181,11 +181,11 @@ int main(int argc, char* argv[]) {
 
 			}
 
-			// Close file pointers
-			fclose(inFilePointer);
-			fclose(outFilePointer);
-
 		}
+
+		// Close file pointers
+		fclose(inFilePointer);
+		fclose(outFilePointer);
 
 	}
 	/*Free the allocated memory*/
