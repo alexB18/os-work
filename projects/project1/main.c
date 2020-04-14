@@ -92,37 +92,101 @@ int main(int argc, char* argv[]) {
 	inBufferPtr = (char*) malloc(bufferSize * sizeof(char));
 	savePtr = (char**) malloc(sizeof(char*));
 
-	/*main run loop*/
-	while (CONTINUE){
+	/* If in "interactive" mode, ask user for input and respond 
+	in kind */
+	if (MODE == 0){
 
-		/* Print >>> then get the input string */
-		fprintf(stdout, ">>> ");
-		getline(&inBufferPtr, &bufferSize, stdin);
-		inBufferPtr[strlen(inBufferPtr) - 1] = 0;
-		*savePtr = inBufferPtr;
+		/*main run loop*/
+		while (CONTINUE){
 
-		if(strlen(inBufferPtr) > 0){
-			fprintf(stdout, "\n");	
-		}
+			/* Print >>> then get the input string */
+			fprintf(stdout, ">>> ");
+			getline(&inBufferPtr, &bufferSize, stdin);
+			inBufferPtr[strlen(inBufferPtr) - 1] = 0;
+			*savePtr = inBufferPtr;
 
-		/* Tokenize the input string */
-		/* Display each token */
-		i = 0;
-		while ((token = strtok_r(*savePtr, " ", savePtr))){
+			if(strlen(inBufferPtr) > 0){
+				fprintf(stdout, "\n");	
+			}
 
-			// If the user entered <exit> then exit both loops
-			if(strcmp(token, "exit") == 0){
-				CONTINUE = 0;
-				break;
+			/* Tokenize the input string */
+			/* Display each token */
+			i = 0;
+			while ((token = strtok_r(*savePtr, " ", savePtr))){
 
-			}else if(strcmp(token, "\n") == 0){
-				break;
+				// If the user entered <exit> then exit both loops
+				if(strcmp(token, "exit") == 0){
+					CONTINUE = 0;
+					break;
 
-			}else{
-				fprintf(stdout, "T%i: %s\n", i, token);
-				i++;
+				}else if(strcmp(token, "\n") == 0){
+					break;
+
+				}else{
+					fprintf(stdout, "T%i: %s\n", i, token);
+					i++;
+				}
 			}
 		}
+
+	
+	/* If in "file" mode, read commands from input file */
+	} else if(MODE == 1){
+
+		// Init input and output file names
+		char* inFileName = argv[2];
+		char* outFileName = "output.txt";
+
+		// Attempt to open input file
+		FILE* inFilePointer = fopen(inFileName, "r");
+
+		// Check if input file exists, exit otherwise
+		if(inFilePointer == NULL){
+			fprintf(stderr, "fopen() failed to open file %s", inFileName);
+			exit(EXIT_FAILURE);
+		}
+
+		// open output file and create one if it doesn't exist
+		FILE* outFilePointer = fopen(outFileName, "w+");
+
+		// Get input from input file line by line until ther are no more lines
+		while(getline(&inBufferPtr, &bufferSize, inFilePointer) != -1){
+
+			//Strip null character from end of buffer and save current Buffer
+			inBufferPtr[strlen(inBufferPtr) - 1] = 0;
+			*savePtr = inBufferPtr;
+
+			// Check if current buffer is empty
+			if(strlen(inBufferPtr) > 0){
+				fprintf(outFilePointer, "\n");
+			}
+
+			/* Tokenize the input string */
+			/* Display each token */
+			i = 0;
+			while ((token = strtok_r(*savePtr, " ", savePtr))){
+
+				// If the user entered exit, exit both loops
+				if(strcmp(token, "exit") == 0){
+					break;
+				
+				} else if(strcmp(token, "\n") == 0){
+					break;
+				
+				} else {
+					fprintf(outFilePointer, "T%i: %s\n", i, token);
+					i++;
+				}
+				
+
+			}
+
+			// Close file pointers
+			fclose(inFilePointer);
+			fclose(outFilePointer);
+
+		}
+
 	}
 	/*Free the allocated memory*/
 	free(inBufferPtr);
