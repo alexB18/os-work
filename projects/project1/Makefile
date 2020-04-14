@@ -19,9 +19,7 @@ CFLAGS  = -g -Wall
 # you can name this target entry anything, but "default" or "all"
 # are the most commonly used names by convention
 #
-default: pseudo-shell val
-
-no-val: pseudo-shell
+default: pseudo-shell
 
 # To create the executable file count we need the object files
 # countwords.o, counter.o, and scanner.o:
@@ -48,8 +46,12 @@ main.o:  main.c
 clean: 
 	$(RM) pseudo-shell log.txt output.txt *.o *~
 
-# To run valgrind, type 'make val'
+# To run valgrind in interactive mode, type 'make val-interactive'
+# To run valgrind in file mode, type 'make val-file'
 # Valgrind will run a leak check and store the
 # results in log.txt
-val:
+val-interactive:
 	valgrind --leak-check=full --tool=memcheck ./pseudo-shell > log.txt 2>&1
+
+val-file:
+	valgrind --leak-check=full --tool=memcheck ./pseudo-shell -f input.txt > log.txt 2>&1
