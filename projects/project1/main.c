@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "command.h"
 /*---------------------------------------------------------------------------*/
 
 // 0 -> interactive mode
@@ -73,6 +74,38 @@ int usage(int argc, char** argv)
 	}
 }
 
+void execUnixCmd(char* command){
+
+	if(strcmp(command, "ls") == 0){
+		fprintf(stdout, "%s not yet implemented in command.c\n", command);
+	
+	} else if(strcmp(command, "pwd") == 0){
+		fprintf(stdout, "%s not yet implemented in command.c\n", command);
+	
+	} else if(strcmp(command, "mkdir") == 0){
+		fprintf(stdout, "%s not yet implemented in command.c\n", command);
+	
+	} else if(strcmp(command, "cd") == 0){
+		fprintf(stdout, "%s not yet implemented in command.c\n", command);
+	
+	} else if(strcmp(command, "cp") == 0){
+		fprintf(stdout, "%s not yet implemented in command.c\n", command);
+	
+	} else if(strcmp(command, "mv") == 0){
+		fprintf(stdout, "%s not yet implemented in command.c\n", command);
+	
+	} else if(strcmp(command, "rm") == 0){
+		fprintf(stdout, "%s not yet implemented in command.c\n", command);
+
+	} else if(strcmp(command, "cat") == 0){
+		fprintf(stdout, "%s not yet implemented in command.c\n", command);
+
+	} else {
+		fprintf(stdout, "Unrecognized command.\n");
+	}
+
+}
+
 /*-----------------------------Program Main----------------------------------*/
 int main(int argc, char* argv[]) {
 	setbuf(stdout, NULL);
@@ -119,13 +152,21 @@ int main(int argc, char* argv[]) {
 					CONTINUE = 0;
 					break;
 
+				// If the user entered nothing, then simply repeat loop
 				}else if(strcmp(token, "\n") == 0){
 					break;
 
+				}
+				else {
+					execUnixCmd(token);
+				}
+
+				// DEBUG: Tokenize input and print
+				/*
 				}else{
 					fprintf(stdout, "T%i: %s\n", i, token);
 					i++;
-				}
+				}*/
 			}
 		}
 
