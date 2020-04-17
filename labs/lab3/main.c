@@ -76,7 +76,8 @@ int usage(int argc, char** argv)
 
 void execUnixCmd(char* command){
 	if(strcmp(command, "lfcat") == 0){
-		fprintf(stdout, "%s not yet implemented in command.c\n", command);
+		//fprintf(stdout, "%s not yet implemented in command.c\n", command);
+		lfcat();
 
 	} else if(strcmp(command, "ls") == 0){
 		fprintf(stdout, "%s not yet implemented in command.c\n", command);
@@ -151,11 +152,11 @@ int main(int argc, char** argv) {
 		}
 
 		// Attempt to open input file and switch context of stdin
-		inFilePointer = freopen(inFileName, "r", stdin);
+		inFilePointer = fopen(inFileName, "r");
 
 		// Check if input file exists, exit otherwise
 		if(inFilePointer == NULL){
-			fprintf(stderr, "freopen() failed to open file %s\n", inFileName);
+			fprintf(stderr, "fpen() failed to open file %s\n", inFileName);
 			exit(EXIT_FAILURE);
 		}
 
@@ -167,10 +168,14 @@ int main(int argc, char** argv) {
 	// Main run cycle
 	do
 	{
-		// Display prompt and read input from console/file using getline(3)
-		// Get input from input file line by line until ther are no more lines
-		fprintf(stdout, ">>> ");
-		numLineCharacters = getline(&inBufferPtr, &bufferSize, stdin);
+		if(MODE == 1){
+			numLineCharacters = getline(&inBufferPtr, &bufferSize, inFilePointer);
+		} else{
+			// Display prompt and read input from console/file using getline(3)
+			// Get input from input file line by line until ther are no more lines
+			numLineCharacters = getline(&inBufferPtr, &bufferSize, stdin);
+		}
+		
 
 
 		// Strip newline at the end of the input string
@@ -179,9 +184,11 @@ int main(int argc, char** argv) {
 		// Save copy of inBufferPointer
 		*savePtr = inBufferPtr;
 
+		/*
 		if(strlen(inBufferPtr) > 0){
 			fprintf(stdout, "\n");
-		}		
+		}
+		*/	
 	
 		/* Tokenize and process the input string. Remember there can be multiple
 		calls to lfcat. i.e. lfcat ; lfcat <-- valid
@@ -203,9 +210,15 @@ int main(int argc, char** argv) {
 			} else if(strcmp(token, "\n") == 0){
 				break;
 			
+			} else if(strcmp(token, "lfcat") == 0){
+				lfcat();
+			}
+			
+			/*
 			} else{
 				execUnixCmd(token);
-			}		
+			}	
+			*/	
 		}
 
 	} while((numLineCharacters != -1) && (CONTINUE));
