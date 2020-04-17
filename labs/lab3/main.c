@@ -120,16 +120,16 @@ int main(int argc, char** argv) {
 
 	/* Main Function Variables */
 	int CONTINUE = 1;
-	int i;
+	int numLineCharacters;
 	char *inBufferPtr, *token, **savePtr;
-	size_t bufferSize = 60;
+	size_t bufferSize = 80;
 
 	/* Allocate memory for the input inBufferPtr. and savePtr */
 	inBufferPtr = (char*) malloc(bufferSize * sizeof(char));
 	savePtr = (char**) malloc(sizeof(char*));
 
 	/* Initialize inFilePointer and outFilePointer to null by default */
-	FILE *inFilePointer, *outFilePointer = NULL;	
+	FILE *inFilePointer, *outFilePointer;	
 
 	/* Switch the context of STDOUT if the program is started with the -f flag.
 	   Open the file for reading and open a file "output.txt" for writing.
@@ -165,12 +165,13 @@ int main(int argc, char** argv) {
 	 	//Hint: use strcspn(2) to find where the newline is then assign '\0' there.
 
 	// Main run cycle
-	do {
-
-
+	do
+	{
 		// Display prompt and read input from console/file using getline(3)
+		// Get input from input file line by line until ther are no more lines
 		fprintf(stdout, ">>> ");
-		getline(&inBufferPtr, &bufferSize, stdin);
+		numLineCharacters = getline(&inBufferPtr, &bufferSize, stdin);
+
 
 		// Strip newline at the end of the input string
 		inBufferPtr[strlen(inBufferPtr) - 1] = 0;
@@ -181,17 +182,16 @@ int main(int argc, char** argv) {
 		if(strlen(inBufferPtr) > 0){
 			fprintf(stdout, "\n");
 		}		
-
+	
 		/* Tokenize and process the input string. Remember there can be multiple
-		   calls to lfcat. i.e. lfcat ; lfcat <-- valid
-		 	 If the command is either 'exit' or 'lfcat' then do the approp. things.
-		   Note: you do not need to explicitly use an if-else clause here. For
-			     instance, you could use a string-int map and a switch statement
-					 or use a function that compares the input token to an array of
-					 commands, etc. But anything that gets the job done gets full points so
-					 think creatively. ^.^  Don't forget to display the error messages
-					 seen in the lab discription*/
-		i = 0;
+		calls to lfcat. i.e. lfcat ; lfcat <-- valid
+			If the command is either 'exit' or 'lfcat' then do the approp. things.
+		Note: you do not need to explicitly use an if-else clause here. For
+				instance, you could use a string-int map and a switch statement
+					or use a function that compares the input token to an array of
+					commands, etc. But anything that gets the job done gets full points so
+					think creatively. ^.^  Don't forget to display the error messages
+					seen in the lab discription*/
 		while ((token = strtok_r(*savePtr, " ", savePtr))){
 			
 			// If the user entered <exit> then exit both loops
@@ -208,15 +208,12 @@ int main(int argc, char** argv) {
 			}		
 		}
 
-	} while(CONTINUE);
+	} while((numLineCharacters != -1) && (CONTINUE));
 
 	/*Free the allocated memory and close any open files*/
 	
-	if(inFilePointer != NULL){
+	if(MODE == 1){
 		fclose(inFilePointer);
-	}
-
-	if(outFilePointer != NULL){
 		fclose(outFilePointer);
 	}
 
