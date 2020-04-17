@@ -50,8 +50,8 @@ clean:
 # To run valgrind in file mode, type 'make val-file'
 # Valgrind will run a leak check and store the
 # results in log.txt
-val-interactive:
+val-interactive: pseudo-shell
 	valgrind --leak-check=full --tool=memcheck ./pseudo-shell > log.txt 2>&1
 
-val-file:
+val-file: pseudo-shell
 	valgrind --leak-check=full --tool=memcheck ./pseudo-shell -f input.txt > log.txt 2>&1
