@@ -1,12 +1,9 @@
 /*
-* Description: String processing in C. 
-* 		1. Takes input from the console using "getline()".
-* 		2. Tokenizes the input string and displays each individual
-* 		   token on stdout.
+* Description: <write a brief description of your lab>
 *
-* Author: Alex Brown
+* Author: <your name>
 *
-* Date: 4/7/2020
+* Date: <today's date>
 *
 * Notes:
 * 1. <add notes we should consider when grading>
@@ -15,14 +12,17 @@
 /*-------------------------Preprocessor Directives---------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
+#include <dirent.h>
 #include <string.h>
+#include <unistd.h>
 #include "command.h"
 /*---------------------------------------------------------------------------*/
 
 // 0 -> interactive mode
 // 1 -> file mode
-int MODE;  
+int MODE;
 
+/*--------------------------- Helper Functions ------------------------------*/
 
 /* This function checks the input parameters to the program to make 
    sure they are correct. If the number of input parameters is incorrect, or 
@@ -75,8 +75,10 @@ int usage(int argc, char** argv)
 }
 
 void execUnixCmd(char* command){
+	if(strcmp(command, "lfcat") == 0){
+		fprintf(stdout, "%s not yet implemented in command.c\n", command);
 
-	if(strcmp(command, "ls") == 0){
+	} else if(strcmp(command, "ls") == 0){
 		fprintf(stdout, "%s not yet implemented in command.c\n", command);
 	
 	} else if(strcmp(command, "pwd") == 0){
@@ -103,135 +105,121 @@ void execUnixCmd(char* command){
 	} else {
 		fprintf(stdout, "Unrecognized command.\n");
 	}
-
 }
+/*---------------------------------------------------------------------------*/
 
 /*-----------------------------Program Main----------------------------------*/
-int main(int argc, char* argv[]) {
+int main(int argc, char** argv) {
 	setbuf(stdout, NULL);
 
-	// check usage and set appropriate mode
+	// Global Variable Initializations
 	MODE = usage(argc, argv);
+	/* DEBUG
 	fprintf(stdout, "Mode: %i\n", MODE);
+	*/
 
 	/* Main Function Variables */
 	int CONTINUE = 1;
-	int i;
+	int numLineCharacters;
 	char *inBufferPtr, *token, **savePtr;
-	size_t bufferSize = 60;
-
+	size_t bufferSize = 80;
 
 	/* Allocate memory for the input inBufferPtr. and savePtr */
 	inBufferPtr = (char*) malloc(bufferSize * sizeof(char));
 	savePtr = (char**) malloc(sizeof(char*));
 
-	/* If in "interactive" mode, ask user for input and respond 
-	in kind */
-	if (MODE == 0){
+	/* Initialize inFilePointer and outFilePointer to null by default */
+	FILE *inFilePointer, *outFilePointer;	
 
-		/*main run loop*/
-		while (CONTINUE){
+	/* Switch the context of STDOUT if the program is started with the -f flag.
+	   Open the file for reading and open a file "output.txt" for writing.
+	   Hint: use freopen() to switch the context of a file descriptor. */
+	if(MODE == 1){
 
-			/* Print >>> then get the input string */
-			fprintf(stdout, ">>> ");
-			getline(&inBufferPtr, &bufferSize, stdin);
-			inBufferPtr[strlen(inBufferPtr) - 1] = 0;
-			*savePtr = inBufferPtr;
-
-			if(strlen(inBufferPtr) > 0){
-				fprintf(stdout, "\n");	
-			}
-
-			/* Tokenize the input string */
-			/* Display each token */
-			i = 0;
-			while ((token = strtok_r(*savePtr, " ", savePtr))){
-
-				// If the user entered <exit> then exit both loops
-				if(strcmp(token, "exit") == 0){
-					CONTINUE = 0;
-					break;
-
-				// If the user entered nothing, then simply repeat loop
-				}else if(strcmp(token, "\n") == 0){
-					break;
-
-				}
-				else {
-					execUnixCmd(token);
-				}
-
-				// DEBUG: Tokenize input and print
-				/*
-				}else{
-					fprintf(stdout, "T%i: %s\n", i, token);
-					i++;
-				}*/
-			}
-		}
-
-	
-	/* If in "file" mode, read commands from input file */
-	} else if(MODE == 1){
-
-		// Init input and output file names
+		//Init input and output file names
 		char* inFileName = argv[2];
 		char* outFileName = "output.txt";
 
-		// Attempt to open input file
-		FILE* inFilePointer = fopen(inFileName, "r");
+		//FILE* freopen(const char* pathname, const char* mode, FILE* stream);
+		// Attempt to create/open output file and switch context of stdout
+		outFilePointer = freopen(outFileName, "w+", stdout);
 
-		// Check if input file exists, exit otherwise
-		if(inFilePointer == NULL){
-			fprintf(stderr, "fopen() failed to open file %s", inFileName);
+		// Check if outFilePointer was created succesfully
+		if(outFilePointer == NULL){
+			fprintf(stderr, "freopen() failed to create/open file %s\n", outFileName);
 			exit(EXIT_FAILURE);
 		}
 
-		// open output file and create one if it doesn't exist
-		FILE* outFilePointer = fopen(outFileName, "w+");
+		// Attempt to open input file and switch context of stdin
+		inFilePointer = freopen(inFileName, "r", stdin);
 
-		// Get input from input file line by line until ther are no more lines
-		while(getline(&inBufferPtr, &bufferSize, inFilePointer) != -1){
-
-			//Strip null character from end of buffer and save current Buffer
-			inBufferPtr[strlen(inBufferPtr) - 1] = 0;
-			*savePtr = inBufferPtr;
-
-			// Check if current buffer is empty
-			if(strlen(inBufferPtr) > 0){
-				fprintf(outFilePointer, "\n");
-			}
-
-			/* Tokenize the input string */
-			/* Display each token */
-			i = 0;
-			while ((token = strtok_r(*savePtr, " ", savePtr))){
-
-				// If the user entered exit, exit both loops
-				if(strcmp(token, "exit") == 0){
-					break;
-				
-				} else if(strcmp(token, "\n") == 0){
-					break;
-				
-				} else {
-					fprintf(outFilePointer, "T%i: %s\n", i, token);
-					i++;
-				}
-				
-
-			}
-
+		// Check if input file exists, exit otherwise
+		if(inFilePointer == NULL){
+			fprintf(stderr, "freopen() failed to open file %s\n", inFileName);
+			exit(EXIT_FAILURE);
 		}
 
-		// Close file pointers
+	}
+	
+		 // Remove the newline at the end of the input string.
+	 	//Hint: use strcspn(2) to find where the newline is then assign '\0' there.
+
+	// Main run cycle
+	do
+	{
+		// Display prompt and read input from console/file using getline(3)
+		// Get input from input file line by line until ther are no more lines
+		fprintf(stdout, ">>> ");
+		numLineCharacters = getline(&inBufferPtr, &bufferSize, stdin);
+
+
+		// Strip newline at the end of the input string
+		inBufferPtr[strlen(inBufferPtr) - 1] = 0;
+
+		// Save copy of inBufferPointer
+		*savePtr = inBufferPtr;
+
+		if(strlen(inBufferPtr) > 0){
+			fprintf(stdout, "\n");
+		}		
+	
+		/* Tokenize and process the input string. Remember there can be multiple
+		calls to lfcat. i.e. lfcat ; lfcat <-- valid
+			If the command is either 'exit' or 'lfcat' then do the approp. things.
+		Note: you do not need to explicitly use an if-else clause here. For
+				instance, you could use a string-int map and a switch statement
+					or use a function that compares the input token to an array of
+					commands, etc. But anything that gets the job done gets full points so
+					think creatively. ^.^  Don't forget to display the error messages
+					seen in the lab discription*/
+		while ((token = strtok_r(*savePtr, " ", savePtr))){
+			
+			// If the user entered <exit> then exit both loops
+			if(strcmp(token, "exit") == 0){
+					CONTINUE = 0;
+					break;	
+			
+			// If the user entered nothing, then simply repeat loop & ask for input again
+			} else if(strcmp(token, "\n") == 0){
+				break;
+			
+			} else{
+				execUnixCmd(token);
+			}		
+		}
+
+	} while((numLineCharacters != -1) && (CONTINUE));
+
+	/*Free the allocated memory and close any open files*/
+	
+	if(MODE == 1){
 		fclose(inFilePointer);
 		fclose(outFilePointer);
-
 	}
-	/*Free the allocated memory*/
+
 	free(inBufferPtr);
 	free(savePtr);
-	exit(EXIT_SUCCESS);
+
+	return 0;
 }
 /*-----------------------------Program End-----------------------------------*/
