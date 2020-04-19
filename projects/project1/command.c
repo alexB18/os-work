@@ -1,5 +1,7 @@
 #include "command.h"
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -82,6 +84,11 @@ void showCurrentDir(){
 
 /*for the mkdir command*/
 void makeDir(char *dirName){
+
+    // mkdir returns -1 if it ran into an error
+    if(mkdir(dirName, 0777) == -1){
+        perror("Error! Unable to create directory");
+    }
 
 }
 

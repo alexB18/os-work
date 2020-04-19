@@ -121,7 +121,8 @@ void execUnixCmd(char** command, int args){
 		if(args != 2){
 			fprintf(stderr, "Error! Unsupported parameters for command: %s\n", command[0]);
 		} else {
-			fprintf(stdout, "%s not yet implemented in command.c\n", command[0]);
+			//fprintf(stdout, "%s not yet implemented in command.c\n", command[0]);
+			makeDir(command[1]);
 		}
 
 	} else if(strcmp(command[0], "cd") == 0){
