@@ -173,6 +173,8 @@ int main(int argc, char** argv) {
 
 	// Global Variable Initializations
 	MODE = usage(argc, argv);
+
+
 	VALID_COMMANDS = (char**) malloc(NUM_OF_COMMANDS * sizeof(char*));
 	VALID_COMMANDS[0] = "ls";
 	VALID_COMMANDS[1] = "pwd";
@@ -218,6 +220,10 @@ int main(int argc, char** argv) {
 		// Check if outFilePointer was created succesfully
 		if(outFilePointer == NULL){
 			fprintf(stderr, "freopen() failed to create/open file %s\n", outFileName);
+			free(inBufferPtr);
+			free(savePtr);
+			free(tokens);
+			free(VALID_COMMANDS);
 			exit(EXIT_FAILURE);
 		}
 
@@ -227,6 +233,11 @@ int main(int argc, char** argv) {
 		// Check if input file exists, exit otherwise
 		if(inFilePointer == NULL){
 			fprintf(stderr, "freopen() failed to open file %s\n", inFileName);
+			free(inBufferPtr);
+			free(savePtr);
+			free(tokens);
+			fclose(outFilePointer);
+			free(VALID_COMMANDS);
 			exit(EXIT_FAILURE);
 		}
 
@@ -259,7 +270,7 @@ int main(int argc, char** argv) {
 			TOKEN_ERROR = 0;
 
 			
-			// If the user entered <exit> then exit both loops
+			// If the user entered <exit> then exit *both* loops
 			if(strcmp(token, "exit") == 0){
 					CONTINUE = 0;
 					break;	
