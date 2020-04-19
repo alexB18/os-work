@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <fcntl.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -125,4 +126,23 @@ void deleteFile(char *filename){
 /*for the cat command*/
 void displayFile(char *filename){
 
+    // small/non-negative int which will be used to refer to opened file
+    int currentFileDescriptor;
+    size_t bytesRead;   // int which refers to the exact number of bytes read by read()
+    char contents[currentFileDescriptor];   // string containing the contents of the file
+
+    // Open the file in "read only" mode
+    currentFileDescriptor = open(filename, O_RDONLY);
+
+    // Check to see if file was opened correctly
+    if(currentFileDescriptor == -1){
+        perror("Error! Unable to open file");
+    
+    } else {
+        bytesRead = read(currentFileDescriptor, contents, sizeof(contents) - 1);
+        write(1, contents, bytesRead);
+        write(1, "\n", 1);
+        close(currentFileDescriptor);
+        //free(contents);
+    }
 }
