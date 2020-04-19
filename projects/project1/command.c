@@ -115,6 +115,11 @@ void moveFile(char *sourcePath, char *destinationPath){
 /*for the rm command*/
 void deleteFile(char *filename){
 
+    //unlink returns -1 if it ran into an error
+    if(unlink(filename) == -1){
+        perror("Error! Unable to delete file");
+    }
+
 }
 
 /*for the cat command*/
