@@ -95,6 +95,11 @@ void makeDir(char *dirName){
 /*for the cd command*/
 void changeDir(char *dirName){
     
+    //chdir returns -1 if it ran into an error
+    if(chdir(dirName) == -1){
+        perror("Error! Unable to change directory");
+    }
+    
 }
 
 /*for the cp command*/
