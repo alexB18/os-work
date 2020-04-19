@@ -79,12 +79,12 @@ void execUnixCmd(char* command){
 		fprintf(stdout, "%s not yet implemented in command.c\n", command);
 
 	} else if(strcmp(command, "ls") == 0){
-		fprintf(stdout, "%s not yet implemented in command.c\n", command);
-	
+		//fprintf(stdout, "%s not yet implemented in command.c\n", command);
+		listDir();
+		
 	} else if(strcmp(command, "pwd") == 0){
 		//fprintf(stdout, "%s not yet implemented in command.c\n", command);
 		showCurrentDir();
-		fprintf(stdout, "\n");
 	
 	} else if(strcmp(command, "mkdir") == 0){
 		fprintf(stdout, "%s not yet implemented in command.c\n", command);

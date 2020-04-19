@@ -1,5 +1,6 @@
 #include "command.h"
 #include <unistd.h>
+#include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,6 +20,34 @@ ssize_t numCharacters(char* inputStr){
 
 /*for the ls command*/
 void listDir(){
+
+    // Declare pointer which will hold current entry in directory
+    struct dirent* directoryEntryPtr;
+
+    // Attempt to open the current directory
+    DIR* directoryStream = opendir(".");
+    if(directoryStream == NULL){
+        perror("Failed to open current directory.\n");
+        exit(EXIT_FAILURE);
+        return;
+    }
+
+    size_t count;
+    while((directoryEntryPtr = readdir(directoryStream)) != NULL){
+
+        //Retrieve number of characters in the name of directory item
+        count = numCharacters(directoryEntryPtr->d_name);
+
+        //write contents name of current directory item to stdout
+        if( write(1, directoryEntryPtr->d_name, count) == -1){
+            perror("Error writing directory item name to stdout.\n");
+            return;
+        }
+        write(1, "\n", 1);
+    }
+
+    //Close directory
+    closedir(directoryStream);
 }
 
 /*for the pwd command*/
@@ -42,9 +71,9 @@ void showCurrentDir(){
     // write contents of directory to stdout
     if( write(1, pathBufferPtr, count) == -1){
         perror("Error writing cwd to stdout.\n");
-        exit(EXIT_FAILURE);
+        return;
     }
-    //write(1, '\n', 1);
+    write(1, "\n", 1);
 
     // Free allocated memory
     free(pathBufferPtr);
