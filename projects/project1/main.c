@@ -307,7 +307,7 @@ int main(int argc, char** argv) {
 			i++;		
 		}
 
-		if( (tokens[0] != NULL) && (strcmp(tokens[0], "exit") != 0) && (!TOKEN_ERROR) ) {
+		if( (strcmp(tokens[0], "exit") != 0) && (!TOKEN_ERROR) ) {
 			execUnixCmd(tokens, i);
 		}
 		//free(tokens);
