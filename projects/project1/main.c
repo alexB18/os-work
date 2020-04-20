@@ -1,12 +1,28 @@
 /*
-* Description: <write a brief description of your lab>
+* Description: Implement a "pseudo-shell" which can perform the
+*				following UNIX commands without flags:
+*				ls, pwd, mkdir, cd, cp, mv, rm, cat
 *
-* Author: <your name>
+* Author: Alex Brown
 *
-* Date: <today's date>
+* Date: 4/19/2020
 *
 * Notes:
-* 1. <add notes we should consider when grading>
+* 1. I worked closely with Stephanie Schofield toward the 
+*	end of this project. We worked a bit together to make her 
+*	initial do-while loop asking for user input, talked 
+*	extensively on how best to tokenize and process input, 
+*	and utilized similar helper functions
+*
+* 2. I ran into a strange set of errors in valgrind when 
+*  	executing the cat command. When running valgrind (and 
+*	during compilation) I am warned of using an uninitialized 
+*	value in my displayFile function in command.c . 
+*	However, for the life of me, I was unable to implement 
+*	the function in any other way without getting 
+*	unexpected/incorrect results. The project specification 
+*	stated that no *memory leaks* were allowed, so for the 
+*	sake of time I let it be.
 */
 
 /*-------------------------Preprocessor Directives---------------------------*/
@@ -54,7 +70,6 @@ int usage(int argc, char** argv)
 
 		// so, we need to make sure that the correct arguments are included
 		// we also need to check that there are no more than 2 parameters
-
 		if(strcmp(argv[1], "-f") == 0){
 			return 1;
 
@@ -95,7 +110,6 @@ int isValidCommand(char* command){
 }
 
 void execUnixCmd(char** command, int args){
-	//fprintf(stdout, "args: %i\n", args);
 
 	// If args == 0, then the user likely entered "exit"
 	if(args == 0){
@@ -188,9 +202,6 @@ int main(int argc, char** argv) {
 	VALID_COMMANDS[5] = "mv";
 	VALID_COMMANDS[6] = "rm";
 	VALID_COMMANDS[7] = "cat";
-	/* DEBUG
-	fprintf(stdout, "Mode: %i\n", MODE);
-	*/
 
 	/* Main Function Variables */
 	int CONTINUE = 1;
@@ -326,11 +337,9 @@ int main(int argc, char** argv) {
 			i++;		
 		}
 
-		//(strcmp(tokens[0], "exit") != 0) &&
 		if( (!TOKEN_ERROR) ) {
 			execUnixCmd(tokens, i);
 		}
-		//free(tokens);
 
 		/* If for some reason we've reached this point and CONTROL_CODE == 1
 		then we've stumbled into the case where the last argument is ; and we
@@ -339,13 +348,10 @@ int main(int argc, char** argv) {
 			fprintf(stderr, "Error! Unrecognized command: \n\n");
 		}
 
-		// At the end of the loop, before asking for new input, print a newline
-		//fprintf(stdout, "\n");
 
 	} while((numLineCharacters != -1) && (CONTINUE));
 
 	/*Free the allocated memory and close any open files*/
-	
 	if(MODE == 1){
 		fclose(inFilePointer);
 		fclose(outFilePointer);

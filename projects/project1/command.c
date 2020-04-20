@@ -214,6 +214,5 @@ void displayFile(char *filename){
         write(1, contents, bytesRead);
         write(1, "\n", 1);
         close(currentFileDescriptor);
-        //free(contents);
     }
 }
