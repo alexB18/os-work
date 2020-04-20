@@ -92,6 +92,19 @@ int usage(int argc, char** argv)
 	}
 }
 
+/* This function checks whether a given string is a valid UNIX
+	command within the scope of the project. 
+
+   returns an int corresponding to whether or not the entered
+   string is avalid UNIX command
+   0 --> invalid
+   1 --> valid
+
+   input parameters:
+       char* command
+    return parameters:
+       int
+ */
 int isValidCommand(char* command){
 
 	int result = 0;
@@ -109,6 +122,17 @@ int isValidCommand(char* command){
 	return result;
 }
 
+/* calls the necessary function in command.c associated with the linux comand
+	the user entered
+
+   returns nothing
+
+   input parameters:
+       char** command
+       int args 
+    return parameters:
+       void
+ */
 void execUnixCmd(char** command, int args){
 
 	// If args == 0, then the user likely entered "exit"
