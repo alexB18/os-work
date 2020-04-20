@@ -106,6 +106,39 @@ void changeDir(char *dirName){
 /*for the cp command*/
 void copyFile(char *sourcePath, char *destinationPath){
 
+    int sourceFileDescriptor, destinationFileDescriptor;
+    size_t bytesRead;
+    char* buffer[2048];
+
+    // Attempt to open source file
+    sourceFileDescriptor = open(sourcePath, O_RDONLY);
+    if(sourceFileDescriptor == -1){
+        perror("Error! Unable to open file to be copied");
+        return;
+    }
+
+    // Attempt to open destination file
+    // The O_CREAT / O_TRUNC truncates existing file or creates a new one if need
+    // The rest are for permissions
+    destinationFileDescriptor = open(destinationPath, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWGRP |  S_IWUSR | S_IRGRP | S_IROTH | S_IWOTH);
+    if(sourceFileDescriptor == -1){
+        perror("Error! Unable to open destination folder");
+        close(destinationFileDescriptor);
+        return;
+    }
+
+    // Transfer data from the source file to the destination file until end
+    while((bytesRead = read(sourceFileDescriptor, buffer, 2048)) > 0){
+        if(write(destinationFileDescriptor, buffer, bytesRead) != bytesRead){
+            perror("Error! Unable to write data to destination file");
+        }
+    }
+
+    close(sourceFileDescriptor);
+    close(destinationFileDescriptor);
+
+    return;
+
 }
 
 /*for the mv command*/
