@@ -194,7 +194,7 @@ int main(int argc, char** argv) {
 
 	/* Main Function Variables */
 	int CONTINUE = 1;
-	int TOKEN_ERROR;
+	int TOKEN_ERROR, CONTROL_CODE;
 	int numLineCharacters, i;
 	char *inBufferPtr, *token, **savePtr, **tokens;
 	size_t bufferSize = 80;
@@ -262,39 +262,41 @@ int main(int argc, char** argv) {
 		// Save copy of inBufferPointer
 		*savePtr = inBufferPtr;
 
+		/*
 		if(strlen(inBufferPtr) > 0){
 			fprintf(stdout, "\n");
-		}		
+		}
+		*/		
 	
 		/* Tokenize and process the input string. Remember there can be multiple
 		calls to lfcat. i.e. lfcat ; lfcat <-- valid*/
 		i = 0;
 		while ((token = strtok_r(*savePtr, " ", savePtr))){
-			// Set error flag back to 0
+			// Set error flag and control code flag back to 0
 			TOKEN_ERROR = 0;
+			CONTROL_CODE = 0;
 
 			
 			// If the user entered <exit> then exit *both* loops
 			if(strcmp(token, "exit") == 0){
 					CONTINUE = 0;
 					break;	
-			
-			// If the user entered nothing, then simply repeat loop & ask for input again
-			} else if(strcmp(token, "\0") == 0){
-				fprintf(stdout, "newline\n");
-				break;
 
-			// If the token is control code, we need to check to make sure it isn't at the end of the line
+			/* If the token is control code, we need to check to make sure it isn't 
+			at the end of the line*/
 			} else if(strcmp(token, ";") == 0){
 
 				//If tokens isn't empty, then we need to call execUnixCmd on it
-				execUnixCmd(tokens, i);
+				if( tokens != NULL){
+					execUnixCmd(tokens, i);
+				}
 
 				/* Then we need to clear tokens for the next potential batch of parameters,
-				reset i to 0, and continue the tokenization loop*/
+				reset i to 0, set CONTROL_CODE FLAG, and continue the tokenization loop*/
 				free(tokens);
 				tokens = (char**) malloc(tokenBuffer * sizeof(char*));
 				i = 0;
+				CONTROL_CODE = 1;
 				continue;
 
 			// If the current token is a valid command, we need to make sure it's the only one
@@ -313,7 +315,7 @@ int main(int argc, char** argv) {
 			} else{
 				
 				if(i == 0){
-					fprintf(stderr, "Error! Unrecognized command: %s \n", token);
+					fprintf(stderr, "Error! Unrecognized command: %s \n\n", token);
 					TOKEN_ERROR = 1;
 					break;
 				}
@@ -329,6 +331,16 @@ int main(int argc, char** argv) {
 			execUnixCmd(tokens, i);
 		}
 		//free(tokens);
+
+		/* If for some reason we've reached this point and CONTROL_CODE == 1
+		then we've stumbled into the case where the last argument is ; and we
+		need to print an error message*/
+		if(CONTROL_CODE){
+			fprintf(stderr, "Error! Unrecognized command: \n\n");
+		}
+
+		// At the end of the loop, before asking for new input, print a newline
+		//fprintf(stdout, "\n");
 
 	} while((numLineCharacters != -1) && (CONTINUE));
 

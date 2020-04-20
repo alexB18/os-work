@@ -31,7 +31,6 @@ void listDir(){
     DIR* directoryStream = opendir(".");
     if(directoryStream == NULL){
         perror("Failed to open current directory.\n");
-        exit(EXIT_FAILURE);
         return;
     }
 
@@ -46,8 +45,9 @@ void listDir(){
             perror("Error writing directory item name to stdout.\n");
             return;
         }
-        write(1, "\n", 1);
+        write(1, " ", 1);
     }
+    write(1, "\n", 1);
 
     //Close directory
     closedir(directoryStream);
