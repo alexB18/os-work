@@ -29,7 +29,7 @@ mcp1.o:  mcp1.c
 	$(CC) $(CFLAGS) -c mcp1.c
 
 clean: 
-	$(RM) mcp1.c log.txt *.o *~
+	$(RM) mcp1 log.txt *.o *~
 
 # To run valgrind, type 'make val-file'
 # Valgrind will run a leak check and store the
