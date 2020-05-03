@@ -57,6 +57,10 @@ int main(int argc, char** argv){
         exit(EXIT_FAILURE);
     }
 
+    /* ----------------------------------------------------------- */
+    /* 1. Read the program workload from the specified input file. */
+    /* ----------------------------------------------------------- */
+    
     // Main run cycle
     i = 0;
     do
@@ -98,9 +102,14 @@ int main(int argc, char** argv){
         fprintf(stdout, "\n");
         i++;
     }while (numLineCharacters != -1);
-    //
 
-    /* 1. Read the program workload from the specified input file. */
+    // Now that the input has been tokenized, we can start launching processes
+
+    // Free allocated memory
+    free(currentLinePtr);
+    free(lineSavePtr);
+    free(cmdSavePtr);
+    free(args);
 
     /* 2. For each program, MCP mush launch program to run as separate process
     using some variant of fork(2) and one of the exec() system calls. */
