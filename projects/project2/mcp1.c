@@ -21,7 +21,7 @@
 int main(int argc, char** argv){
 
     /* Main Function Variables */
-    int numLineCharacters, lineCounter, commandCounter, argCounter, numPrograms;
+    int numLineCharacters, lineCounter, commandCounter, argCounter, numPrograms, i;
     char *currentLinePtr, *inFileName, *cmdPtr, *arg, **lineSavePtr, **cmdSavePtr, **args, ***programs;
     // size of current *line* buffer
     size_t lineBufferSize = 512;
@@ -34,7 +34,7 @@ int main(int argc, char** argv){
     // size of array holding all programs
     size_t programsBufferSize = 50;
     // int describing process idS
-    pid_t pid;
+    pid_t* pid;
 
     /* Allocate memory for the input inBufferPtr and savePtr */
     currentLinePtr = (char*) malloc(lineBufferSize * sizeof(char));
@@ -107,11 +107,13 @@ int main(int argc, char** argv){
 
             // DEBUG: Print current program with arguments
             
+            /*
             fprintf(stdout, "program[%i]\n", numPrograms);
             for(int i = 0; i < argCounter ; i++){
                 fprintf(stdout, "arg[%i] %s\n", i, programs[numPrograms][i]);
             }
             fprintf(stdout, "\n");
+            */
             
 
 
@@ -125,8 +127,39 @@ int main(int argc, char** argv){
     
     //fprintf(stdout, "Line[%i], Command[%i], Arg[%i]: %s\n", lineCounter, commandCounter, argCounter, arg);
 
+    // Now that we've gathered all programs, it's time to start forking things up
+    //Allocate the required memory for pid array
+    pid = (pid_t*) malloc(numPrograms * sizeof(pid_t));
 
 
+    for(i = 0; i < numPrograms; i++){
+
+        pid[i] = fork();
+
+        //fprintf(stdout, "Current pid:[%i]\n",  pid[i]);
+
+        // Check for error
+        if(pid[i] < 0){
+            fprintf(stderr, "ERROR! Unable to fork.\n");
+            // Free allocated memory
+            free(currentLinePtr);
+            free(lineSavePtr);
+            free(cmdSavePtr);
+            free(args);
+            free(programs);
+            exit(EXIT_FAILURE); 
+        }
+
+        // Case where process is parent
+        if(pid[i] == 0){
+            execvp(programs[i][0], programs[i]);
+            exit(-1);
+        }
+    }
+
+    for(i = 0; i < numPrograms; i++){
+        wait(pid[i]);
+    }
 
     // Free allocated memory
     free(currentLinePtr);
@@ -134,6 +167,9 @@ int main(int argc, char** argv){
     free(cmdSavePtr);
     free(args);
     free(programs);
+
+
+
 
     /* 2. For each program, MCP mush launch program to run as separate process
     using some variant of fork(2) and one of the exec() system calls. */
