@@ -21,8 +21,8 @@
 int main(int argc, char** argv){
 
     /* Main Function Variables */
-    int numLineCharacters, i, j, k;
-    char *currentLinePtr, *inFileName, *cmdPtr, *arg, **lineSavePtr, **cmdSavePtr, **args;
+    int numLineCharacters, lineCounter, commandCounter, argCounter, numPrograms;
+    char *currentLinePtr, *inFileName, *cmdPtr, *arg, **lineSavePtr, **cmdSavePtr, **args, ***programs;
     // size of current *line* buffer
     size_t lineBufferSize = 512;
     // size of current *command separated by ; * buffer
@@ -31,6 +31,8 @@ int main(int argc, char** argv){
     size_t argBufferSize = 128;
     // size of arrray holding args for current command
     size_t argsBufferSize = 10;
+    // size of array holding all programs
+    size_t programsBufferSize = 50;
     // int describing process idS
     pid_t pid;
 
@@ -39,6 +41,7 @@ int main(int argc, char** argv){
     lineSavePtr = (char**) malloc(lineBufferSize * sizeof(char*));
     cmdSavePtr = (char**) malloc(cmdBufferSize * sizeof(char*));
     args = (char**) malloc(argsBufferSize * sizeof(char*));
+    programs = (char***) malloc(programsBufferSize *sizeof(char**));
 
     /* Init. inFilePtr to null by default */
     FILE *inFilePtr;
@@ -62,7 +65,8 @@ int main(int argc, char** argv){
     /* ----------------------------------------------------------- */
     
     // Main run cycle
-    i = 0;
+    numPrograms = 0;
+    lineCounter = 0;
     do
     {
         // Get input from input file line by line until there are no more lines
@@ -75,41 +79,61 @@ int main(int argc, char** argv){
         *lineSavePtr = currentLinePtr;
 
         /* Tokenize each line by semicolon */
-        j = 0;
+        commandCounter = 0;
         while((cmdPtr = strtok_r(*lineSavePtr, ";", lineSavePtr))){
 
             // Next, save copy of current command
             *cmdSavePtr = cmdPtr;
 
             // Tokenize each command by space
-            k = 0;
+            argCounter = 0;
             while((arg = strtok_r(*cmdSavePtr, " ", cmdSavePtr)) && (numLineCharacters != -1)){
 
                 if(strcmp(arg, "\n") == 0){
-                    i++;
+                    lineCounter++;
                 }
 
                 // DEBUG: print each token
-                fprintf(stdout, "Line[%i], Command[%i], Arg[%i]: %s\n", i, j, k, arg);
+                //fprintf(stdout, "Line[%i], Command[%i], Arg[%i]: %s\n", lineCounter, commandCounter, argCounter, arg);
                 
                 // Add arg to collection of args
-                args[k] = arg;
-                k++;
+                args[argCounter] = arg;
+
+                argCounter++;
             }
-            j++;
+
+            // Save current command to programs array
+            programs[numPrograms]= args;
+
+            // DEBUG: Print current program with arguments
+            
+            fprintf(stdout, "program[%i]\n", numPrograms);
+            for(int i = 0; i < argCounter ; i++){
+                fprintf(stdout, "arg[%i] %s\n", i, programs[numPrograms][i]);
+            }
+            fprintf(stdout, "\n");
+            
+
+
+            // increment global numPrograms and local commandCounter
+            numPrograms ++;
+            commandCounter++;
         }
-        // DEBUG: print newline after above DEBUG statement has finished
-        fprintf(stdout, "\n");
-        i++;
+        lineCounter++;
     }while (numLineCharacters != -1);
 
-    // Now that the input has been tokenized, we can start launching processes
+    
+    //fprintf(stdout, "Line[%i], Command[%i], Arg[%i]: %s\n", lineCounter, commandCounter, argCounter, arg);
+
+
+
 
     // Free allocated memory
     free(currentLinePtr);
     free(lineSavePtr);
     free(cmdSavePtr);
     free(args);
+    free(programs);
 
     /* 2. For each program, MCP mush launch program to run as separate process
     using some variant of fork(2) and one of the exec() system calls. */
