@@ -34,5 +34,5 @@ clean:
 # To run valgrind, type 'make val-file'
 # Valgrind will run a leak check and store the
 # results in log.txt
-val-file: mcp1
-	valgrind --leak-check=full --tool=memcheck ./mcp1 -f input.txt > log.txt 2>&1
+val-mcp1: mcp1
+	valgrind --leak-check=full --tool=memcheck ./mcp1 input.txt > log.txt 2>&1
