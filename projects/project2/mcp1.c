@@ -18,6 +18,36 @@
 #include <sys/wait.h>
 /*---------------------------------------------------------------------------*/
 
+/*-----------------------------Helper Functions------------------------------*/
+int countlines(char * filename){
+
+    FILE* filePtr;
+    char character;
+    int numLines = 0;
+
+    // Begin reading from file
+    filePtr = fopen(filename, "r");
+    // If there's an error, return -1
+    if(filePtr == NULL){
+        fprintf(stdout, "ERROR! File \"%s\" doesn't exist.\n", filename);
+        return -1;
+    }
+
+    // Read file character by character to search for new lines
+    while((character = fgetc(filePtr)) != EOF){
+        if(character == '\n'){
+            numLines++;
+        }
+    }
+
+    // Close the file and return number of lines
+    fclose(filePtr);
+    return numLines;
+
+}
+/*---------------------------------------------------------------------------*/
+
+
 int main(int argc, char** argv){
 
     /* Main Function Variables */
@@ -35,6 +65,14 @@ int main(int argc, char** argv){
     size_t programsBufferSize = 50;
     // int describing process idS
     pid_t* pid;
+
+    numPrograms = countlines(argv[1]);
+    if(numPrograms == -1 ){
+        exit(EXIT_FAILURE);
+    
+    } else {
+        fprintf(stdout, "Number of programs: %i\n", numPrograms);
+    }
 
     /* Allocate memory for the input inBufferPtr and savePtr */
     currentLinePtr = (char*) malloc(lineBufferSize * sizeof(char));
@@ -89,12 +127,12 @@ int main(int argc, char** argv){
             argCounter = 0;
             while((arg = strtok_r(*cmdSavePtr, " ", cmdSavePtr)) && (numLineCharacters != -1)){
 
-                if(strcmp(arg, "\n") == 0){
-                    lineCounter++;
-                }
 
                 // DEBUG: print each token
                 //fprintf(stdout, "Line[%i], Command[%i], Arg[%i]: %s\n", lineCounter, commandCounter, argCounter, arg);
+
+                // DEBUG: print which arg is being added along with argCounter
+                //fprintf(stdout, "argCounter[%i]: %s\n", argCounter, arg);
                 
                 // Add arg to collection of args
                 args[argCounter] = arg;
@@ -107,13 +145,13 @@ int main(int argc, char** argv){
 
             // DEBUG: Print current program with arguments
             
-            /*
+            
             fprintf(stdout, "program[%i]\n", numPrograms);
             for(int i = 0; i < argCounter ; i++){
                 fprintf(stdout, "arg[%i] %s\n", i, programs[numPrograms][i]);
             }
             fprintf(stdout, "\n");
-            */
+            
             
 
 
@@ -124,7 +162,7 @@ int main(int argc, char** argv){
         lineCounter++;
     }while (numLineCharacters != -1);
 
-    
+    /*
     //fprintf(stdout, "Line[%i], Command[%i], Arg[%i]: %s\n", lineCounter, commandCounter, argCounter, arg);
 
     // Now that we've gathered all programs, it's time to start forking things up
@@ -160,6 +198,7 @@ int main(int argc, char** argv){
     for(i = 0; i < numPrograms; i++){
         wait(pid[i]);
     }
+    */
 
     // Free allocated memory
     free(currentLinePtr);
