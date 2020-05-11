@@ -16,6 +16,10 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+
+#define LINE_BUFFER_SIZE 512
+#define PROGRAMS_BUFFER_SIZE 256
+#define ARGS_BUFFER_SIZE 10
 /*---------------------------------------------------------------------------*/
 
 /*-----------------------------Helper Functions------------------------------*/
@@ -45,6 +49,21 @@ int countlines(char * filename){
     return numLines;
 
 }
+
+int copyStringArray(char *** source, char*** destination, int arraySize){
+
+    //First allocate the memory required for this particular 
+
+    for(int i = 0; i < arraySize; i++){
+
+        if(strcpy(*destination[i], *source[i]) != 0){
+            fprintf(stderr, "ERROR! Unable to copy string array.\n");
+            return -1;
+        }
+    }
+
+    return 0;
+}
 /*---------------------------------------------------------------------------*/
 
 int main(int argc, char** argv){
@@ -52,18 +71,9 @@ int main(int argc, char** argv){
     /* Main Function Variables */
     int numLineCharacters, lineCounter, numCommands, numArgs, numPrograms, i;
     char *currentLinePtr, *inFileName, *cmdPtr, *arg, **lineSavePtr, **cmdSavePtr, **args, ***programs;
-    // size of current *line* buffer
-    size_t lineBufferSize = 512;
-    // size of current *command separated by ; * buffer
-    size_t cmdBufferSize = 256;
-    // size of *argument in current command* buffer
-    size_t argBufferSize = 128;
-    // size of arrray holding args for current command
-    size_t argsBufferSize = 10;
-    // size of array holding all programs
-    size_t programsBufferSize = 50;
-    // int describing process idS
-    pid_t* pid;
+
+    size_t programsBufferSizeHolder = PROGRAMS_BUFFER_SIZE;
+
 
     // DEBUG: Print number of detected lines (programs)
     numPrograms = countlines(argv[1]);
@@ -74,12 +84,15 @@ int main(int argc, char** argv){
         fprintf(stdout, "Number of programs: %i\n", numPrograms);
     }
 
+    // int describing process idS
+    pid_t* pid = (pid_t*) malloc(numPrograms *sizeof(pid_t));
+
     /* Allocate memory for the input inBufferPtr and savePtr */
-    currentLinePtr = (char*) malloc(lineBufferSize * sizeof(char));
-    lineSavePtr = (char**) malloc(lineBufferSize * sizeof(char*));
-    cmdSavePtr = (char**) malloc(cmdBufferSize * sizeof(char*));
-    args = (char**) malloc(argsBufferSize * sizeof(char*));
-    programs = (char***) malloc(programsBufferSize *sizeof(char**));
+    currentLinePtr = (char*) malloc(LINE_BUFFER_SIZE * sizeof(char));
+    lineSavePtr = (char**) malloc(LINE_BUFFER_SIZE * sizeof(char*));
+    
+    args = (char**) malloc(ARGS_BUFFER_SIZE * sizeof(char*));
+    programs = (char***) malloc(numPrograms *sizeof(char**));
 
     /* Init. inFilePtr to null by default */
     FILE *inFilePtr;
@@ -108,7 +121,7 @@ int main(int argc, char** argv){
     do
     {
         // Get input from input file line by line until there are no more lines
-        numLineCharacters = getline(&currentLinePtr, &lineBufferSize, stdin);
+        numLineCharacters = getline(&currentLinePtr, &programsBufferSizeHolder, stdin);
 
         // Strip newline at the end of the input string
         currentLinePtr[strlen(currentLinePtr) - 1] = '\0';
@@ -140,8 +153,8 @@ int main(int argc, char** argv){
                 numArgs++;
             }
 
-            // Save current command to programs array
-            programs[numPrograms]= args;
+            // Copy Current args values to programs[numCommands];
+            copyStringArray(&args, &programs[numCommands], numArgs);
 
             // DEBUG: Print current program with arguments
             
@@ -182,7 +195,6 @@ int main(int argc, char** argv){
             // Free allocated memory
             free(currentLinePtr);
             free(lineSavePtr);
-            free(cmdSavePtr);
             free(args);
             free(programs);
             exit(EXIT_FAILURE); 
@@ -203,7 +215,6 @@ int main(int argc, char** argv){
     // Free allocated memory
     free(currentLinePtr);
     free(lineSavePtr);
-    free(cmdSavePtr);
     free(args);
     free(programs);
 
