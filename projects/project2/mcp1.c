@@ -47,11 +47,10 @@ int countlines(char * filename){
 }
 /*---------------------------------------------------------------------------*/
 
-
 int main(int argc, char** argv){
 
     /* Main Function Variables */
-    int numLineCharacters, lineCounter, commandCounter, argCounter, numPrograms, i;
+    int numLineCharacters, lineCounter, numCommands, argCounter, numPrograms, i;
     char *currentLinePtr, *inFileName, *cmdPtr, *arg, **lineSavePtr, **cmdSavePtr, **args, ***programs;
     // size of current *line* buffer
     size_t lineBufferSize = 512;
@@ -66,6 +65,7 @@ int main(int argc, char** argv){
     // int describing process idS
     pid_t* pid;
 
+    // DEBUG: Print number of detected lines (programs)
     numPrograms = countlines(argv[1]);
     if(numPrograms == -1 ){
         exit(EXIT_FAILURE);
@@ -117,7 +117,7 @@ int main(int argc, char** argv){
         *lineSavePtr = currentLinePtr;
 
         /* Tokenize each line by semicolon */
-        commandCounter = 0;
+        numCommands = 0;
         while((cmdPtr = strtok_r(*lineSavePtr, ";", lineSavePtr))){
 
             // Next, save copy of current command
@@ -129,7 +129,7 @@ int main(int argc, char** argv){
 
 
                 // DEBUG: print each token
-                //fprintf(stdout, "Line[%i], Command[%i], Arg[%i]: %s\n", lineCounter, commandCounter, argCounter, arg);
+                //fprintf(stdout, "Line[%i], Command[%i], Arg[%i]: %s\n", lineCounter, numCommands, argCounter, arg);
 
                 // DEBUG: print which arg is being added along with argCounter
                 //fprintf(stdout, "argCounter[%i]: %s\n", argCounter, arg);
@@ -155,15 +155,15 @@ int main(int argc, char** argv){
             
 
 
-            // increment global numPrograms and local commandCounter
+            // increment global numPrograms and local numCommands
             numPrograms ++;
-            commandCounter++;
+            numCommands++;
         }
         lineCounter++;
     }while (numLineCharacters != -1);
 
-    /*
-    //fprintf(stdout, "Line[%i], Command[%i], Arg[%i]: %s\n", lineCounter, commandCounter, argCounter, arg);
+    
+    //fprintf(stdout, "Line[%i], Command[%i], Arg[%i]: %s\n", lineCounter, numCommands, argCounter, arg);
 
     // Now that we've gathered all programs, it's time to start forking things up
     //Allocate the required memory for pid array
@@ -198,7 +198,7 @@ int main(int argc, char** argv){
     for(i = 0; i < numPrograms; i++){
         wait(pid[i]);
     }
-    */
+    
 
     // Free allocated memory
     free(currentLinePtr);
