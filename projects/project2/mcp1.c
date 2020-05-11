@@ -67,6 +67,7 @@ int main(int argc, char** argv){
 
     // DEBUG: Print number of detected lines (programs)
     numPrograms = countlines(argv[1]);
+    
     if(numPrograms == -1 ){
         exit(EXIT_FAILURE);
     
