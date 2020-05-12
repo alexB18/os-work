@@ -168,69 +168,6 @@ int main(int argc, char** argv){
     for(int i = 0; i < numPrograms; i++){
         waitpid(pid[i], &status, 0);
     }
-    
-
-    /*
-    //make sure that programs has been created correctly.
-    for(int i = 0; i < numPrograms; i++){
-
-        fprintf(stdout, "i: %i\n", i);
-        
-        for(int j = 0; j < ARGS_BUFFER_SIZE; j++){
-            fprintf(stdout, "Programs[%i][%i]: %s\n", i, j, programs[i][j]);
-        }
-        
-        while(programs[i][j] != NULL){
-            fprintf(stdout, "Programs[%i][%i]: %s\n", i, j, programs[i][j]);
-
-            j++;
-        }
-        
-
-        
-        fprintf(stdout, "\n");
-
-
-    }
-    */
-
-    
-    //fprintf(stdout, "Line[%i], Command[%i], Arg[%i]: %s\n", lineCounter, numCommands, numArgs, arg);
-
-    // Now that we've gathered all programs, it's time to start forking things up
-    //Allocate the required memory for pid array
-    //pid = (pid_t*) malloc(numPrograms * sizeof(pid_t));
-
-
-    /*
-    for(i = 0; i < numPrograms; i++){
-
-        pid[i] = fork();
-
-        //fprintf(stdout, "Current pid:[%i]\n",  pid[i]);
-
-        // Check for error
-        if(pid[i] < 0){
-            fprintf(stderr, "ERROR! Unable to fork.\n");
-            // Free allocated memory
-            free(currentLinePtr);
-            free(lineSavePtr);
-            free(args);
-            free(programs);
-            exit(EXIT_FAILURE); 
-        }
-
-        // Case where process is parent
-        if(pid[i] == 0){
-            execvp(programs[i][0], programs[i]);
-            exit(-1);
-        }
-    }
-
-    for(i = 0; i < numPrograms; i++){
-        wait(pid[i]);
-    }
-    */
 
     //Now we can start deallocating our pid_t and programs array
     for(int i = 0; i < numPrograms; i++){
