@@ -49,28 +49,13 @@ int countlines(char * filename){
     return numLines;
 
 }
-
-int copyStringArray(char *** source, char*** destination, int arraySize){
-
-    //First allocate the memory required for this particular 
-
-    for(int i = 0; i < arraySize; i++){
-
-        if(strcpy(*destination[i], *source[i]) != 0){
-            fprintf(stderr, "ERROR! Unable to copy string array.\n");
-            return -1;
-        }
-    }
-
-    return 0;
-}
 /*---------------------------------------------------------------------------*/
 
 int main(int argc, char** argv){
 
     /* Main Function Variables */
-    int numLineCharacters, lineCounter, numCommands, numArgs, numPrograms, i;
-    char *currentLinePtr, *inFileName, *cmdPtr, *arg, **lineSavePtr, **cmdSavePtr, **args, ***programs;
+    int lineCounter, numArgs, numPrograms, status;
+    char *currentLinePtr, *inFileName, *cmdPtr, **lineSavePtr, **args, ***programs;
 
     size_t programsBufferSizeHolder = PROGRAMS_BUFFER_SIZE;
 
@@ -92,7 +77,11 @@ int main(int argc, char** argv){
     lineSavePtr = (char**) malloc(LINE_BUFFER_SIZE * sizeof(char*));
     
     args = (char**) malloc(ARGS_BUFFER_SIZE * sizeof(char*));
+
     programs = (char***) malloc(numPrograms *sizeof(char**));
+    for(int i = 0; i < numPrograms; i++){
+        programs[i] = (char**) malloc(ARGS_BUFFER_SIZE * sizeof(char*));
+    }
 
     /* Init. inFilePtr to null by default */
     FILE *inFilePtr;
@@ -116,12 +105,10 @@ int main(int argc, char** argv){
     /* ----------------------------------------------------------- */
     
     // Main run cycle
-    numPrograms = 0;
-    lineCounter = 0;
-    do
+    for(lineCounter = 0; lineCounter < numPrograms; lineCounter++)
     {
         // Get input from input file line by line until there are no more lines
-        numLineCharacters = getline(&currentLinePtr, &programsBufferSizeHolder, stdin);
+        getline(&currentLinePtr, &programsBufferSizeHolder, stdin);
 
         // Strip newline at the end of the input string
         currentLinePtr[strlen(currentLinePtr) - 1] = '\0';
@@ -129,60 +116,93 @@ int main(int argc, char** argv){
         // save copy of currentLinePtr
         *lineSavePtr = currentLinePtr;
 
-        /* Tokenize each line by semicolon */
-        numCommands = 0;
-        while((cmdPtr = strtok_r(*lineSavePtr, ";", lineSavePtr))){
+        /* Tokenize each line by space */
+        numArgs = 0;
+        while((cmdPtr = strtok_r(*lineSavePtr, " ", lineSavePtr))){
 
             // Next, save copy of current command
-            *cmdSavePtr = cmdPtr;
+            args[numArgs] = cmdPtr;
 
-            // Tokenize each command by space
-            numArgs = 0;
-            while((arg = strtok_r(*cmdSavePtr, " ", cmdSavePtr)) && (numLineCharacters != -1)){
+            // Copy Current args values to programs[lineCounter];
+            // strcpy(programs[lineCounter][numArgs], args[numArgs]);
 
-
-                // DEBUG: print each token
-                //fprintf(stdout, "Line[%i], Command[%i], Arg[%i]: %s\n", lineCounter, numCommands, numArgs, arg);
-
-                // DEBUG: print which arg is being added along with numArgs
-                //fprintf(stdout, "numArgs[%i]: %s\n", numArgs, arg);
-                
-                // Add arg to collection of args
-                args[numArgs] = arg;
-
-                numArgs++;
-            }
-
-            // Copy Current args values to programs[numCommands];
-            copyStringArray(&args, &programs[numCommands], numArgs);
-
-            // DEBUG: Print current program with arguments
-            
-            
-            fprintf(stdout, "program[%i]\n", numPrograms);
-            for(int i = 0; i < numArgs ; i++){
-                fprintf(stdout, "arg[%i] %s\n", i, programs[numPrograms][i]);
-            }
-            fprintf(stdout, "\n");
-            
-            
-
-
-            // increment global numPrograms and local numCommands
-            numPrograms ++;
-            numCommands++;
+            numArgs++;
+        
         }
-        lineCounter++;
-    }while (numLineCharacters != -1);
+
+        // Replace last arg in args with null string
+        args[numArgs] = (char*) NULL;
+
+        
+        // DEBUG: Print current program with arguments
+        fprintf(stdout, "program[%i]\n", lineCounter);
+        for(int i = 0; i <= numArgs; i++){
+            fprintf(stdout, "arg[%i] %s\n", i, args[i]);
+        }
+        fprintf(stdout, "\n");
+        
+
+        
+        // Now that we've gathered the current command it's time to fork shit up
+        pid[lineCounter] = fork();
+
+        // Case where new process wasn't created correctly
+        if (pid[lineCounter] < 0) {
+            fprintf(stderr, "ERROR! Unable to fork program[%i]: %s.\n", lineCounter, args[0]);
+            exit(-1);
+        }
+
+        // Case where child is parent
+        else if (pid[lineCounter] == 0) {
+            // Make exec call
+            execvp(args[0], args);
+
+            // Exit when finished
+            exit(-1);
+        }
+        
+    }
+
+    
+    // Wait on remaining processes to finish
+    for(int i = 0; i < numPrograms; i++){
+        waitpid(pid[i], &status, 0);
+    }
+    
+
+    /*
+    //make sure that programs has been created correctly.
+    for(int i = 0; i < numPrograms; i++){
+
+        fprintf(stdout, "i: %i\n", i);
+        
+        for(int j = 0; j < ARGS_BUFFER_SIZE; j++){
+            fprintf(stdout, "Programs[%i][%i]: %s\n", i, j, programs[i][j]);
+        }
+        
+        while(programs[i][j] != NULL){
+            fprintf(stdout, "Programs[%i][%i]: %s\n", i, j, programs[i][j]);
+
+            j++;
+        }
+        
+
+        
+        fprintf(stdout, "\n");
+
+
+    }
+    */
 
     
     //fprintf(stdout, "Line[%i], Command[%i], Arg[%i]: %s\n", lineCounter, numCommands, numArgs, arg);
 
     // Now that we've gathered all programs, it's time to start forking things up
     //Allocate the required memory for pid array
-    pid = (pid_t*) malloc(numPrograms * sizeof(pid_t));
+    //pid = (pid_t*) malloc(numPrograms * sizeof(pid_t));
 
 
+    /*
     for(i = 0; i < numPrograms; i++){
 
         pid[i] = fork();
@@ -210,13 +230,22 @@ int main(int argc, char** argv){
     for(i = 0; i < numPrograms; i++){
         wait(pid[i]);
     }
-    
+    */
+
+    //Now we can start deallocating our pid_t and programs array
+    for(int i = 0; i < numPrograms; i++){
+        //free(pid[i]);
+        free(programs[i]);
+    }
+    free(programs);
+    free(pid);
+    //free(programs);
 
     // Free allocated memory
     free(currentLinePtr);
     free(lineSavePtr);
     free(args);
-    free(programs);
+    //free(programs);
 
 
 
