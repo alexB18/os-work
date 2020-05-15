@@ -52,6 +52,11 @@ int countlines(char * filename){
 }
 
 
+void sigusr1_handler (){
+    /* This is an empty sig handler because we're only using SIGUSR1 to get a
+    process to continue. Thus, our handler doesn't need to do anythin.
+    */
+}
 /*---------------------------------------------------------------------------*/
 
 int main(int argc, char** argv){
@@ -62,6 +67,14 @@ int main(int argc, char** argv){
 
     size_t programsBufferSizeHolder = PROGRAMS_BUFFER_SIZE;
 
+    // Initialize signal set
+    sigset_t set;
+    int sig;
+    sigemptyset(&set);
+    sigfillset(&set);
+
+    // Register SIGUSR1 signal with appropriate handler
+    signal(SIGUSR1, sigusr1_handler);
 
     // DEBUG: Print number of detected lines (programs)
     numPrograms = countlines(argv[1]);
@@ -155,29 +168,98 @@ int main(int argc, char** argv){
             exit(-1);
         }
 
-        // Case where child is parent
+        // Case where process is child
         else if (pid[lineCounter] == 0) {
 
-            // Make exec call
-            execvp(args[0], args);
+            //DEBUG: inform that process is waiting for SIGUSR1
+            fprintf(stdout, "Child Process: %d - Waiting for SIGUSR1...\n", getpid());
 
-            // Exit when finished
-            exit(-1);
+            // Wait for SIGUSR1
+            int status = sigwait(&set, &sig);
+            if(status != 0){
+                fprintf(stderr, "Sigwait error with process: %d\n", getpid());
+                exit(-1);
+            
+            } else {
+
+                // Make exec call
+                execvp(args[0], args);
+
+                // Exit when finished
+                exit(-1);
+            }
+
+            /*
+            // Attempt to add Signal SIGUSR1 to signal Set
+            if(sigaddset(&set, SIGUSR1) == -1){
+                fprintf(stderr, "Error with sigaddset.\n");
+                exit(-1);
+            }
+            
+
+            // Wait until SIGUSR1 signal is given before calling exec
+            //DEBUG: inform that processes has just entered the sigwait loop
+            fprintf(stdout, "Process: %i waiting for SIGUSR1.\n", getpid());
+            while(1) {
+
+                // Call sigwait and check for errors
+                if(sigwait(&sigSet, &sig) != 0){
+                    fprintf(stderr, "Error with sigwait in process: %i\n", getpid());
+                    exit(-1);
+                }
+
+                //If sig received is SIGUSR1, break the loop;
+                if(sig == SIGUSR1){
+                  break;
+                }
+            }
+            */
+
         }
         
     }
+    sleep(1);
 
+    // Send SIGUSR1 to once all are waiting proccess, indicating ready to call exec
+    fprintf(stdout, "\n");
+    for(int i = 0; i < numPrograms; i ++){
+        kill(pid[i], SIGUSR1);
+        fprintf(stdout, "Process: %d - Received signal: SIGUSR1 - Calling exec().\n", pid[i]);
+
+    }
+    fprintf(stdout, "\n");
+
+    // Once all processes up and running, we want to suspend them
+    for(int i = 0; i < numPrograms; i++){
+        kill(pid[i], SIGSTOP);
+        fprintf(stdout, "Process: %d received SIGSTOP. Waiting...\n", pid[i]);
+    }
+    fprintf(stdout, "\n");
+    sleep(1);
+
+    // Once they've been suspended, we want to resume them
+    for(int i = 0; i < numPrograms; i++){
+        kill(pid[i], SIGCONT);
+        fprintf(stdout, "Process: %d received SIGCONT. Resuming...\n", pid[i]);
+
+    }
+    fprintf(stdout, "\n"); 
     
     // Wait on remaining processes to finish
     for(int i = 0; i < numPrograms; i++){
+
+        // Wait until the process is finished executing
         waitpid(pid[i], &status, 0);
     }
+
+    fprintf(stdout, "\n ALL PROCESSES FINISHED\n");
 
     //Now we can start deallocating our pid_t and programs array
     for(int i = 0; i < numPrograms; i++){
         //free(pid[i]);
         free(programs[i]);
     }
+
     free(programs);
     free(pid);
     //free(programs);
