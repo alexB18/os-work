@@ -21,6 +21,12 @@
 #define LINE_BUFFER_SIZE 512
 #define PROGRAMS_BUFFER_SIZE 256
 #define ARGS_BUFFER_SIZE 10
+
+// int array holding all pid's currently in the workload. Is allocated in main.
+pid_t* pid;
+
+// int representing the total number of programs in workload. Initialized in main.
+int numPrograms;
 /*---------------------------------------------------------------------------*/
 
 /*-----------------------------Helper Functions------------------------------*/
@@ -62,7 +68,7 @@ void sigusr1_handler (){
 int main(int argc, char** argv){
 
     /* Main Function Variables */
-    int lineCounter, numArgs, numPrograms, status;
+    int lineCounter, numArgs, status;
     char *currentLinePtr, *inFileName, *cmdPtr, **lineSavePtr, **args, ***programs;
 
     size_t programsBufferSizeHolder = PROGRAMS_BUFFER_SIZE;
@@ -73,7 +79,7 @@ int main(int argc, char** argv){
     sigemptyset(&set);
     sigfillset(&set);
 
-    // Register SIGUSR1 signal with appropriate handler
+    // Register SIGUSR1 and SIGALRM signals with appropriate handlers
     signal(SIGUSR1, sigusr1_handler);
 
     // DEBUG: Print number of detected lines (programs)
@@ -85,8 +91,8 @@ int main(int argc, char** argv){
         fprintf(stdout, "Number of programs: %i\n", numPrograms);
     }
 
-    // int describing process idS
-    pid_t* pid = (pid_t*) malloc(numPrograms *sizeof(pid_t));
+    // Now that we have numPrograms, allocate necessary size in pid array
+    pid = (pid_t*) malloc(numPrograms *sizeof(pid_t));
 
     /* Allocate memory for the input inBufferPtr and savePtr */
     currentLinePtr = (char*) malloc(LINE_BUFFER_SIZE * sizeof(char));
@@ -148,7 +154,6 @@ int main(int argc, char** argv){
 
         // Replace last arg in args with null string
         args[numArgs] = (char*) NULL;
-
         
         // DEBUG: Print current program with arguments
         fprintf(stdout, "program[%i]\n", lineCounter);
@@ -156,8 +161,6 @@ int main(int argc, char** argv){
             fprintf(stdout, "arg[%i] %s\n", i, args[i]);
         }
         fprintf(stdout, "\n");
-        
-
         
         // Now that we've gathered the current command it's time to fork shit up
         pid[lineCounter] = fork();
@@ -170,9 +173,6 @@ int main(int argc, char** argv){
 
         // Case where process is child
         else if (pid[lineCounter] == 0) {
-
-            //DEBUG: inform that process is waiting for SIGUSR1
-            fprintf(stdout, "Child Process: %d - Waiting for SIGUSR1...\n", getpid());
 
             // Wait for SIGUSR1
             int status = sigwait(&set, &sig);
@@ -188,56 +188,22 @@ int main(int argc, char** argv){
                 // Exit when finished
                 exit(-1);
             }
-
-            /*
-            // Attempt to add Signal SIGUSR1 to signal Set
-            if(sigaddset(&set, SIGUSR1) == -1){
-                fprintf(stderr, "Error with sigaddset.\n");
-                exit(-1);
-            }
-            
-
-            // Wait until SIGUSR1 signal is given before calling exec
-            //DEBUG: inform that processes has just entered the sigwait loop
-            fprintf(stdout, "Process: %i waiting for SIGUSR1.\n", getpid());
-            while(1) {
-
-                // Call sigwait and check for errors
-                if(sigwait(&sigSet, &sig) != 0){
-                    fprintf(stderr, "Error with sigwait in process: %i\n", getpid());
-                    exit(-1);
-                }
-
-                //If sig received is SIGUSR1, break the loop;
-                if(sig == SIGUSR1){
-                  break;
-                }
-            }
-            */
-
         }
-        
     }
     sleep(1);
 
-    // Send SIGUSR1 to once all are waiting proccess, indicating ready to call exec
+    // Once all processes are ready to hit exec, we want to suspend them for the time being
     fprintf(stdout, "\n");
-    for(int i = 0; i < numPrograms; i ++){
-        kill(pid[i], SIGUSR1);
-        fprintf(stdout, "Process: %d - Received signal: SIGUSR1 - Calling exec().\n", pid[i]);
-
-    }
-    fprintf(stdout, "\n");
-
-    // Once all processes up and running, we want to suspend them
     for(int i = 0; i < numPrograms; i++){
+        kill(pid[i], SIGUSR1);
         kill(pid[i], SIGSTOP);
         fprintf(stdout, "Process: %d received SIGSTOP. Waiting...\n", pid[i]);
     }
     fprintf(stdout, "\n");
     sleep(1);
 
-    // Once they've been suspended, we want to resume them
+    
+    // Once they've been suspended, we want to resume them in a time sliced manner
     for(int i = 0; i < numPrograms; i++){
         kill(pid[i], SIGCONT);
         fprintf(stdout, "Process: %d received SIGCONT. Resuming...\n", pid[i]);
@@ -245,10 +211,10 @@ int main(int argc, char** argv){
     }
     fprintf(stdout, "\n"); 
     
+    
     // Wait on remaining processes to finish
     for(int i = 0; i < numPrograms; i++){
 
-        // Wait until the process is finished executing
         waitpid(pid[i], &status, 0);
     }
 
@@ -256,30 +222,13 @@ int main(int argc, char** argv){
 
     //Now we can start deallocating our pid_t and programs array
     for(int i = 0; i < numPrograms; i++){
-        //free(pid[i]);
         free(programs[i]);
     }
 
+    // Free allocated memory
     free(programs);
     free(pid);
-    //free(programs);
-
-    // Free allocated memory
     free(currentLinePtr);
     free(lineSavePtr);
     free(args);
-    //free(programs);
-
-
-
-
-    /* 2. For each program, MCP mush launch program to run as separate process
-    using some variant of fork(2) and one of the exec() system calls. */
-
-    /* 3. Once all of the programs are running, MCP must wait for each program to
-    terminate using the system call wait(). */
-
-    /* 4. After all programs have terminated, MCP must exit using the exit() 
-    system call. */
-
 }
