@@ -25,6 +25,15 @@
 // int array holding all pid's currently in the workload. Is allocated in main.
 pid_t* pid;
 
+// int array holding the exited of all pid's currently in the workload. Is allocated in main
+int* exited;
+// tallies the total number of programs which have exited.
+int numExited = 0;
+// int describing the index of the process which is currently in execution
+int activeProcessIndex = 0;
+
+
+
 // int representing the total number of programs in workload. Initialized in main.
 int numPrograms;
 /*---------------------------------------------------------------------------*/
@@ -56,12 +65,122 @@ int countlines(char * filename){
     return numLines;
 
 }
+/*----------------------------------------------------------------------------*/
 
-
+/*-----------------------------Handler Functions------------------------------*/
 void sigusr1_handler (){
     /* This is an empty sig handler because we're only using SIGUSR1 to get a
     process to continue. Thus, our handler doesn't need to do anythin.
     */
+}
+
+
+void sigalrm_handler(){
+    /* When the SIGALRM signal is delivered, the MCP will be interrupted and the signal 
+    handling function will be executed. The following will happen when th signal 
+    handler is called:
+    
+    1.The MCP will suspend the running workload process.
+    2.The MCP decides on the next workload process to run, and sends it a ​SIGCONT​ signal.
+    3.The MCP will reset the alarm, and continue with whatever else it was doing
+    */
+
+    // Suspend the currently running process
+    kill(pid[activeProcessIndex], SIGSTOP);
+
+    fprintf(stdout, "\nProcess: %d paused...\n", pid[activeProcessIndex]);
+    fprintf(stdout, "Num Exited: %d\n", numExited);
+
+
+    // Decide on the next process to run, and sent it a SIGCONT signal
+
+    /*
+       The simplest method is just to schedule the next process in the
+       pid array... so that's what imma do.
+    */
+    int isFinished;
+    int isStopped;
+    int status;
+    //int lock = 1;
+    while(1) {
+
+        waitpid(pid[activeProcessIndex], &status, WNOHANG);
+        isFinished = WIFEXITED(status);
+        isStopped = WIFSTOPPED(status);
+        //fprintf(stdout, "isFinished: %i\n", status);
+
+        // If the current process is dead, and we don't already know about it,
+        // We need to continue and mark it/update...
+        if((isFinished) && (exited[activeProcessIndex] == 0)){
+
+            exited[activeProcessIndex] = 1;
+
+            // But we need to ake sure the active process index doesn't get bigger than numPrograms
+            if(activeProcessIndex == (numPrograms - 1)){
+                activeProcessIndex = 0;
+            
+            } else {
+                activeProcessIndex++;
+            }
+
+            numExited ++;
+            continue;
+        
+        // If the current process is dead, and we knew about it, just continue...
+        } else if(isFinished){
+
+            // But we need to ake sure the active process index doesn't get bigger than numPrograms
+            if(activeProcessIndex == (numPrograms - 1)){
+                activeProcessIndex = 0;
+            
+            } else {
+                activeProcessIndex++;
+            }
+
+            continue;
+        
+        
+        // Else the process is alive and we can start it up...
+        } else {
+
+            if(numExited != (numPrograms - 1)){
+                kill(pid[activeProcessIndex], SIGCONT);
+                fprintf(stdout, "Process: %d resumed...\n", pid[activeProcessIndex]);
+                
+                // But we need to ake sure the active process index doesn't get bigger than numPrograms
+                if(activeProcessIndex == (numPrograms - 1)){
+                    activeProcessIndex = 0;
+            
+                } else {
+                    activeProcessIndex++;
+                }
+
+                alarm(2);
+                return;
+            
+            // If it is, just resume it and don't call alarm
+            } else {
+                kill(pid[activeProcessIndex], SIGCONT);
+                fprintf(stdout, "Process: %d resumed...\n", pid[activeProcessIndex]);
+                
+                
+                // But we need to ake sure the active process index doesn't get bigger than numPrograms
+                if(activeProcessIndex == (numPrograms - 1)){
+                    activeProcessIndex = 0;
+            
+                } else {
+                    activeProcessIndex++;
+                }
+                return;
+            }
+        }
+
+
+
+
+
+    }
+
 }
 /*---------------------------------------------------------------------------*/
 
@@ -77,10 +196,16 @@ int main(int argc, char** argv){
     sigset_t set;
     int sig;
     sigemptyset(&set);
-    sigfillset(&set);
+
+    sigaddset(&set, SIGSTOP);
+    sigaddset(&set, SIGCONT);
+    sigaddset(&set, SIGUSR1);
+    sigaddset(&set, SIGALRM);
+    //sigfillset(&set);
 
     // Register SIGUSR1 and SIGALRM signals with appropriate handlers
     signal(SIGUSR1, sigusr1_handler);
+    signal(SIGALRM, sigalrm_handler);
 
     // DEBUG: Print number of detected lines (programs)
     numPrograms = countlines(argv[1]);
@@ -92,7 +217,9 @@ int main(int argc, char** argv){
     }
 
     // Now that we have numPrograms, allocate necessary size in pid array
-    pid = (pid_t*) malloc(numPrograms *sizeof(pid_t));
+    pid = (pid_t*) malloc(numPrograms * sizeof(pid_t));
+    // Do the same for the exit  array:
+    exited = (int *) malloc(numPrograms * sizeof(int));
 
     /* Allocate memory for the input inBufferPtr and savePtr */
     currentLinePtr = (char*) malloc(LINE_BUFFER_SIZE * sizeof(char));
@@ -174,16 +301,31 @@ int main(int argc, char** argv){
         // Case where process is child
         else if (pid[lineCounter] == 0) {
 
+            // Set exited status of process to 0 as it is starting execution
+            exited[lineCounter] = 0;
+
             // Wait for SIGUSR1
-            int status = sigwait(&set, &sig);
+            status = sigwait(&set, &sig);
+            //fprintf(stdout, "Alarm reached in process: %d\n", getpid());
             if(status != 0){
-                fprintf(stderr, "Sigwait error with process: %d\n", getpid());
+                fprintf(stderr, "Alarm error with process: %d\n", getpid());
                 exit(-1);
             
             } else {
 
                 // Make exec call
                 execvp(args[0], args);
+
+                // Once the exec call has finished, set the exited status of process to 1
+                // as it has finished execution
+                exited[lineCounter] = 1;
+                numExited ++;
+
+                /*
+                    This print statement gets reached but these values ^^^ stay unchanged
+                */
+
+                
 
                 // Exit when finished
                 exit(-1);
@@ -202,19 +344,18 @@ int main(int argc, char** argv){
     fprintf(stdout, "\n");
     sleep(1);
 
-    
-    // Once they've been suspended, we want to resume them in a time sliced manner
-    for(int i = 0; i < numPrograms; i++){
-        kill(pid[i], SIGCONT);
-        fprintf(stdout, "Process: %d received SIGCONT. Resuming...\n", pid[i]);
+    // Now are ready to be scheduled
+    /*
 
-    }
-    fprintf(stdout, "\n"); 
-    
-    
-    // Wait on remaining processes to finish
-    for(int i = 0; i < numPrograms; i++){
+        1. Call alarm(1)*
+        2.  then wait for all children to finish
+        2.a (During this time alrm handler will be triggered)
 
+        (Check if children are alive);
+        (PUT ALARM IN HANDLER)
+    */
+    alarm(2);
+    for(int i = 0; i < numPrograms; i++){
         waitpid(pid[i], &status, 0);
     }
 
@@ -228,6 +369,7 @@ int main(int argc, char** argv){
     // Free allocated memory
     free(programs);
     free(pid);
+    free(exited);
     free(currentLinePtr);
     free(lineSavePtr);
     free(args);
