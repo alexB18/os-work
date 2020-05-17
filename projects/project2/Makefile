@@ -22,6 +22,12 @@ default: mcp1
 mcp1:  mcp1.o iobound cpubound
 	$(CC) $(CFLAGS) -o mcp1 mcp1.o
 
+mcp2:  mcp2.o iobound cpubound
+	$(CC) $(CFLAGS) -o mcp2 mcp2.o
+
+mcp3:  mcp3.o iobound cpubound
+	$(CC) $(CFLAGS) -o mcp3 mcp3.o
+
 iobound: iobound.o
 	$(CC) $(CFLAGS) -o iobound iobound.o
 
@@ -31,8 +37,14 @@ cpubound: cpubound.o
 # To create the object file mcp1.o, we need the source
 # file(s) mcp1.c:
 #
-mcp1.o:  mcp1.c
+mcp1.o:	mcp1.c
 	$(CC) $(CFLAGS) -c mcp1.c
+
+mcp2.o: mcp2.c
+	$(CC) $(CFLAGS) -c mcp2.c
+
+mcp3.o: mcp3.c
+	$(CC) $(CFLAGS) -c mcp3.c
 
 iobound.o: iobound.c
 	$(CC) $(CFLAGS) -c iobound.c
@@ -48,3 +60,11 @@ clean:
 # results in log.txt
 val-mcp1: mcp1
 	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./mcp1 input.txt > log.txt 2>&1
+
+val-mcp2: mcp2
+	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./mcp2 input.txt > log.txt 2>&1
+
+val-mcp3: mcp3
+	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./mcp3 input.txt > log.txt 2>&1
+
+
