@@ -15,7 +15,7 @@ typedef struct topicEntry{
 } topicEntry;
 
 /* --------------- topicEntry Setters --------------- */
-void setEntryTimeStamp(topicEntry** Entry, struct timeval newTimeStamp);
+void setEntryTimeStamp(topicEntry** Entry, struct timeval* newTimeStamp);
 void setEntryNum(topicEntry** Entry, int newEntryNum);
 void setEntryPubID(topicEntry** Entry, int newPubID);
 void setEntryPhotoURL(topicEntry** Entry, char** newPhotoURL);
@@ -28,4 +28,8 @@ int getEntryNum(topicEntry** Entry);
 int getEntryPubID(topicEntry** Entry);
 char* getEntryPhotoURL(topicEntry** Entry);
 char* getEntryPhotoCaption(topicEntry** Entry);
+/* -------------------------------------------------- */
+
+/* --------------- topicEntry Helpers --------------- */
+void printEntryStatus(topicEntry** Entry);
 /* -------------------------------------------------- */

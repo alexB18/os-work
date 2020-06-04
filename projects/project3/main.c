@@ -9,44 +9,56 @@ int main(int argc, char **argv){
     /* ---- Initialize entry variables ---- */
     struct timeval entryTimeStamp;
     int entryNum = 0;
-    
 
-    // Allocate memory for new entry
-    topicEntry* E1 = (topicEntry*) malloc(sizeof(topicEntry));
+    // initialize E0 Strings
+    char* E0_photoURL = "www.google.com";
+    char* E0_caption = "yo yo yo what up ya\'ll.";
+
+    // initialize E1 Strings
+    char* E1_photoURL = "www.mytesturl.org";
+    char* E1_caption = "This caption is a test.";
+    
+    // initialize E2 Strings
+    char* E2_photoURL = "www.clubpenguin.com";
+    char* E2_caption = "Flip the iceburg!";
+
+    // Allocate memory for new entries & initialize attributes
+    // E0
+    topicEntry* E0 = (topicEntry*) malloc(sizeof(topicEntry));
+    gettimeofday(&entryTimeStamp, NULL);
+    setEntryTimeStamp(&E0, &entryTimeStamp);
+    setEntryNum(&E0, entryNum);
+    setEntryPubID(&E0, 00000);
+    setEntryPhotoURL(&E0, &E0_photoURL);
+    setEntryPhotoCaption(&E0, &E0_caption);
     entryNum++;
 
-    // initialize E1_photoURL
-    char* E1_photoURL = "www.google.com";
-    // initialize E1_caption
-    char* E1_caption = "yo yo yo what up ya\'ll";
-
-    /* ----  Initialize new entry ---- */
-
-    // Start with setting time.
+    // E1
+    topicEntry* E1 = (topicEntry*) malloc(sizeof(topicEntry));
     gettimeofday(&entryTimeStamp, NULL);
-    setEntryTimeStamp(&E1, entryTimeStamp);
-
-    // Next set entry num
+    setEntryTimeStamp(&E1, &entryTimeStamp);
     setEntryNum(&E1, entryNum);
-
-    // Next setPubID
     setEntryPubID(&E1, 11111);
-
-    // Next set URL
     setEntryPhotoURL(&E1, &E1_photoURL);
-
-    // Next set photo caption
     setEntryPhotoCaption(&E1, &E1_caption);
+    entryNum++;
 
-    /* ------------------------------- */
-
-    // Print Entry time stamp in seconds
-    fprintf(stdout, "Time: %li\n", getEntryTimeStamp(&E1).tv_sec);
-    fprintf(stdout, "Entry Num: %i\n", getEntryNum(&E1));
-    fprintf(stdout, "Entry PubID: %i\n", getEntryPubID(&E1));
-    fprintf(stdout, "Entry Photo URL: %s\n", getEntryPhotoURL(&E1));
-    fprintf(stdout, "Entry Caption: %s\n", getEntryPhotoCaption(&E1));
+    // E2
+    topicEntry* E2 = (topicEntry*) malloc(sizeof(topicEntry));
+    gettimeofday(&entryTimeStamp, NULL);
+    setEntryTimeStamp(&E2, &entryTimeStamp);
+    setEntryNum(&E2, entryNum);
+    setEntryPubID(&E2, 11111);
+    setEntryPhotoURL(&E2, &E2_photoURL);
+    setEntryPhotoCaption(&E2, &E2_caption);
+    entryNum++;
+    
+    printEntryStatus(&E0);
+    printEntryStatus(&E1);
+    printEntryStatus(&E2);
 
     // Free memory from entry
+    free(E0);
     free(E1);
+    free(E2);
 }
