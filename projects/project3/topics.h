@@ -20,6 +20,8 @@ void setEntryNum(topicEntry** Entry, int newEntryNum);
 void setEntryPubID(topicEntry** Entry, int newPubID);
 void setEntryPhotoURL(topicEntry** Entry, char** newPhotoURL);
 void setEntryPhotoCaption(topicEntry** Entry, char** newPhotoCaption);
+
+void initializeEntry(topicEntry** Entry, int newEntryNum, int newPubID);
 /* -------------------------------------------------- */
 
 /* --------------- topicEntry Getters --------------- */

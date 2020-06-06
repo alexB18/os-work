@@ -25,6 +25,20 @@ void setEntryPhotoURL(topicEntry** Entry, char** newPhotoURL){
 void setEntryPhotoCaption(topicEntry** Entry, char** newPhotoCaption){
     strcpy((*Entry)->photoCaption, *newPhotoCaption);
 }
+
+void initializeEntry(topicEntry** Entry, int newEntryNum, int newPubID){
+    
+    // Retrieve current time
+    struct timeval entryTimeStamp;
+    gettimeofday(&entryTimeStamp, NULL);
+    setEntryTimeStamp(Entry, &entryTimeStamp);
+
+    // Set new entry num
+    setEntryNum(Entry, newEntryNum);
+
+    // Set new pub ID
+    setEntryPubID(Entry, newPubID);
+}
 /* -------------------------------------------------- */
 
 

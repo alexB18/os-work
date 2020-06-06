@@ -7,7 +7,7 @@
 int main(int argc, char **argv){
 
     /* ---- Initialize entry variables ---- */
-    struct timeval entryTimeStamp;
+    //struct timeval entryTimeStamp;
     int entryNum = 0;
 
     // initialize E0 Strings
@@ -25,30 +25,22 @@ int main(int argc, char **argv){
     // Allocate memory for new entries & initialize attributes
     // E0
     topicEntry* E0 = (topicEntry*) malloc(sizeof(topicEntry));
-    gettimeofday(&entryTimeStamp, NULL);
-    setEntryTimeStamp(&E0, &entryTimeStamp);
-    setEntryNum(&E0, entryNum);
-    setEntryPubID(&E0, 00000);
+    topicEntry* E1 = (topicEntry*) malloc(sizeof(topicEntry));
+    topicEntry* E2 = (topicEntry*) malloc(sizeof(topicEntry));
+
+    initializeEntry(&E0, entryNum, 00000);
     setEntryPhotoURL(&E0, &E0_photoURL);
     setEntryPhotoCaption(&E0, &E0_caption);
     entryNum++;
 
     // E1
-    topicEntry* E1 = (topicEntry*) malloc(sizeof(topicEntry));
-    gettimeofday(&entryTimeStamp, NULL);
-    setEntryTimeStamp(&E1, &entryTimeStamp);
-    setEntryNum(&E1, entryNum);
-    setEntryPubID(&E1, 11111);
+    initializeEntry(&E1, entryNum, 11111);
     setEntryPhotoURL(&E1, &E1_photoURL);
     setEntryPhotoCaption(&E1, &E1_caption);
     entryNum++;
 
     // E2
-    topicEntry* E2 = (topicEntry*) malloc(sizeof(topicEntry));
-    gettimeofday(&entryTimeStamp, NULL);
-    setEntryTimeStamp(&E2, &entryTimeStamp);
-    setEntryNum(&E2, entryNum);
-    setEntryPubID(&E2, 11111);
+    initializeEntry(&E2, entryNum, 22222);
     setEntryPhotoURL(&E2, &E2_photoURL);
     setEntryPhotoCaption(&E2, &E2_caption);
     entryNum++;
