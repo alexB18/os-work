@@ -4,32 +4,32 @@
 #include <stdlib.h>
 #include "topics.h"
 
-/* --------------- topicEntry Setters --------------- */
-void setEntryTimeStamp(topicEntry** Entry, struct timeval* newTimeStamp){
+/* --------------- TopicEntry Setters --------------- */
+void setEntryTimeStamp(TopicEntry** Entry, struct timeval* newTimeStamp){
 
     memcpy(&(*Entry)->timeStamp, newTimeStamp, sizeof(*newTimeStamp));
 }
 
-void setEntryNum(topicEntry** Entry, int newEntryNum){
+void setEntryNum(TopicEntry** Entry, int newEntryNum){
     (*Entry)->entryNum = newEntryNum;
 }
 
-void setEntryPubID(topicEntry** Entry, int newPubID){
+void setEntryPubID(TopicEntry** Entry, int newPubID){
     (*Entry)->pubID = newPubID;
 }
 
-void setEntryPhotoURL(topicEntry** Entry, char** newPhotoURL){
+void setEntryPhotoURL(TopicEntry** Entry, char** newPhotoURL){
     strcpy((*Entry)->photoURL, *newPhotoURL);
 }
 
-void setEntryPhotoCaption(topicEntry** Entry, char** newPhotoCaption){
+void setEntryPhotoCaption(TopicEntry** Entry, char** newPhotoCaption){
     strcpy((*Entry)->photoCaption, *newPhotoCaption);
 }
 
-void initializeEntry(topicEntry** Entry, int newEntryNum, int newPubID){
+void initializeEntry(TopicEntry** Entry, int newEntryNum, int newPubID){
     
     // Start by allocating memory for the new Entry...
-    (*Entry) = (topicEntry*) malloc(sizeof(topicEntry));
+    (*Entry) = (TopicEntry*) malloc(sizeof(TopicEntry));
 
     // Next, allocate memory for both the photoURL and the photoCaption
     (*Entry)->photoURL = (char*) malloc(URLSIZE * sizeof(char));
@@ -48,7 +48,7 @@ void initializeEntry(topicEntry** Entry, int newEntryNum, int newPubID){
 
 }
 
-void freeEntry(topicEntry** Entry){
+void freeEntry(TopicEntry** Entry){
 
     // Start by freeing memory from both the photoURL and the photoCaption
     free((*Entry)->photoURL);
@@ -61,30 +61,30 @@ void freeEntry(topicEntry** Entry){
 /* -------------------------------------------------- */
 
 
-/* --------------- topicEntry Getters --------------- */
-struct timeval getEntryTimeStamp(topicEntry** Entry){
+/* --------------- TopicEntry Getters --------------- */
+struct timeval getEntryTimeStamp(TopicEntry** Entry){
     return (*Entry)->timeStamp;
 }
 
-int getEntryNum(topicEntry** Entry){
+int getEntryNum(TopicEntry** Entry){
     return (*Entry)->entryNum;
 }
 
-int getEntryPubID(topicEntry** Entry){
+int getEntryPubID(TopicEntry** Entry){
     return (*Entry)->pubID;
 }
 
-char* getEntryPhotoURL(topicEntry** Entry){
+char* getEntryPhotoURL(TopicEntry** Entry){
     return (*Entry)->photoURL;
 }
 
-char* getEntryPhotoCaption(topicEntry** Entry){
+char* getEntryPhotoCaption(TopicEntry** Entry){
     return (*Entry)->photoCaption;
 }
 /* -------------------------------------------------- */
 
-/* --------------- topicEntry Helpers --------------- */
-void printEntryStatus(topicEntry** Entry){
+/* --------------- TopicEntry Helpers --------------- */
+void printEntryStatus(TopicEntry** Entry){
 
     // Print Entry time stamp in seconds.milliseconds
     fprintf(stdout, "Time: %li.%li s\n", getEntryTimeStamp(Entry).tv_sec, getEntryTimeStamp(Entry).tv_usec);

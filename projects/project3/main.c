@@ -23,10 +23,10 @@ int main(int argc, char **argv){
     char* E2_caption = "Flip the iceburg!";
 
     // Allocate memory for new entries & initialize attributes
-    // Start by declaring topicEntry pointers
-    topicEntry* E0;
-    topicEntry* E1;
-    topicEntry* E2;
+    // Start by declaring TopicEntry pointers
+    TopicEntry* E0;
+    TopicEntry* E1;
+    TopicEntry* E2;
 
     // E0
     initializeEntry(&E0, entryNum, 00000);
