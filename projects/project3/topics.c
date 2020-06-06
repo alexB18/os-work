@@ -28,6 +28,13 @@ void setEntryPhotoCaption(topicEntry** Entry, char** newPhotoCaption){
 
 void initializeEntry(topicEntry** Entry, int newEntryNum, int newPubID){
     
+    // Start by allocating memory for the new Entry...
+    (*Entry) = (topicEntry*) malloc(sizeof(topicEntry));
+
+    // Next, allocate memory for both the photoURL and the photoCaption
+    (*Entry)->photoURL = (char*) malloc(URLSIZE * sizeof(char));
+    (*Entry)->photoCaption = (char*) malloc(CAPSIZE * sizeof(char));
+
     // Retrieve current time
     struct timeval entryTimeStamp;
     gettimeofday(&entryTimeStamp, NULL);
@@ -36,8 +43,20 @@ void initializeEntry(topicEntry** Entry, int newEntryNum, int newPubID){
     // Set new entry num
     setEntryNum(Entry, newEntryNum);
 
-    // Set new pub ID
+    // Set new pub id
     setEntryPubID(Entry, newPubID);
+
+}
+
+void freeEntry(topicEntry** Entry){
+
+    // Start by freeing memory from both the photoURL and the photoCaption
+    free((*Entry)->photoURL);
+    free((*Entry)->photoCaption);
+
+    // Finally, free self
+    free((*Entry));
+
 }
 /* -------------------------------------------------- */
 

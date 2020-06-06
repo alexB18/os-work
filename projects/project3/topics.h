@@ -10,8 +10,11 @@ typedef struct topicEntry{
     int entryNum;
     struct timeval timeStamp;
     int pubID;
-    char photoURL[URLSIZE]; // URL to photo
-    char photoCaption[CAPSIZE]; // photo caption
+    char* photoURL; // URL to photo
+    char* photoCaption; // photo caption
+
+    // pointer to next topicEntry in queue
+    struct topicEntry* NextEntry;
 } topicEntry;
 
 /* --------------- topicEntry Setters --------------- */
@@ -22,6 +25,7 @@ void setEntryPhotoURL(topicEntry** Entry, char** newPhotoURL);
 void setEntryPhotoCaption(topicEntry** Entry, char** newPhotoCaption);
 
 void initializeEntry(topicEntry** Entry, int newEntryNum, int newPubID);
+void freeEntry(topicEntry** Entry);
 /* -------------------------------------------------- */
 
 /* --------------- topicEntry Getters --------------- */

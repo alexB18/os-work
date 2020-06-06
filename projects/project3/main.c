@@ -23,11 +23,12 @@ int main(int argc, char **argv){
     char* E2_caption = "Flip the iceburg!";
 
     // Allocate memory for new entries & initialize attributes
-    // E0
-    topicEntry* E0 = (topicEntry*) malloc(sizeof(topicEntry));
-    topicEntry* E1 = (topicEntry*) malloc(sizeof(topicEntry));
-    topicEntry* E2 = (topicEntry*) malloc(sizeof(topicEntry));
+    // Start by declaring topicEntry pointers
+    topicEntry* E0;
+    topicEntry* E1;
+    topicEntry* E2;
 
+    // E0
     initializeEntry(&E0, entryNum, 00000);
     setEntryPhotoURL(&E0, &E0_photoURL);
     setEntryPhotoCaption(&E0, &E0_caption);
@@ -50,7 +51,7 @@ int main(int argc, char **argv){
     printEntryStatus(&E2);
 
     // Free memory from entry
-    free(E0);
-    free(E1);
-    free(E2);
+    freeEntry(&E0);
+    freeEntry(&E1);
+    freeEntry(&E2);
 }
