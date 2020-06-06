@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "entries.h"
+#include "topics.h"
 
 /* --------------- topicEntry Setters --------------- */
 void setEntryTimeStamp(topicEntry** Entry, struct timeval* newTimeStamp){
