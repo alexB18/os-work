@@ -24,34 +24,34 @@ int main(int argc, char **argv){
 
     // Allocate memory for new entries & initialize attributes
     // Start by declaring TopicEntry pointers
-    TopicEntry* E0;
-    TopicEntry* E1;
-    TopicEntry* E2;
+    TopicEntry* E0 = NULL;
+    TopicEntry* E1 = NULL;
+    TopicEntry* E2 = NULL;
 
     // E0
     initializeEntry(&E0, entryNum, 00000);
-    setEntryPhotoURL(&E0, &E0_photoURL);
-    setEntryPhotoCaption(&E0, &E0_caption);
+    setEntryPhotoURL(E0, &E0_photoURL);
+    setEntryPhotoCaption(E0, &E0_caption);
     entryNum++;
 
     // E1
     initializeEntry(&E1, entryNum, 11111);
-    setEntryPhotoURL(&E1, &E1_photoURL);
-    setEntryPhotoCaption(&E1, &E1_caption);
+    setEntryPhotoURL(E1, &E1_photoURL);
+    setEntryPhotoCaption(E1, &E1_caption);
     entryNum++;
 
     // E2
     initializeEntry(&E2, entryNum, 22222);
-    setEntryPhotoURL(&E2, &E2_photoURL);
-    setEntryPhotoCaption(&E2, &E2_caption);
+    setEntryPhotoURL(E2, &E2_photoURL);
+    setEntryPhotoCaption(E2, &E2_caption);
     entryNum++;
     
-    printEntryStatus(&E0);
-    printEntryStatus(&E1);
-    printEntryStatus(&E2);
+    printEntryStatus(E0);
+    printEntryStatus(E1);
+    printEntryStatus(E2);
 
     // Free memory from entry
-    freeEntry(&E0);
-    freeEntry(&E1);
-    freeEntry(&E2);
+    freeEntry(E0);
+    freeEntry(E1);
+    freeEntry(E2);
 }
