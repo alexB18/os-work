@@ -19,14 +19,14 @@ default: server
 # To create the executable file count we need the object file(s)
 # part1.o:
 #
-server:  topics.o main.o
-	$(CC) $(CFLAGS) -o server topics.o main.o
+server:  Entry.o main.o
+	$(CC) $(CFLAGS) -o server Entry.o main.o
 
 # To create the object file entries.o, we need the source
 # file(s) entries.c and the header file entries.h:
 #
-topics.o: topics.c
-	$(CC) $(CFLAGS) -c topics.c
+Entry.o: Entry.c
+	$(CC) $(CFLAGS) -c Entry.c
 
 main.o: main.c
 	$(CC) $(CFLAGS) -c main.c
