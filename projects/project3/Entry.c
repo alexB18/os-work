@@ -4,6 +4,38 @@
 #include <stdlib.h>
 #include "Entry.h"
 
+/* --------------- Entry Constructor/Destructor --------------- */
+void initializeEntry(Entry** Entry){
+
+    // allocate memory for URL and Caption
+    (*Entry)->photoURL = (char*) malloc(URLSIZE + 1 * sizeof(char));
+    (*Entry)->photoCaption = (char*) malloc(CAPSIZE + 1 * sizeof(char));
+
+    // get execution time
+    struct timeval executionTime;
+    gettimeofday(&executionTime, NULL);
+
+    // set Entry's attributes to defaults
+    setEntryNum(Entry, -1);
+    setEntryTimeStamp(Entry, &executionTime);
+    setEntryPubID(Entry, -1);
+    //setEntryPhotoURL(Entry, NULL);
+    //setEntryPhotoCaption(Entry, NULL);
+}
+
+void destroyEntry(Entry** Entry){
+
+    // deallocate memory for URL and Caption
+    free((*Entry)->photoURL);
+    free((*Entry)->photoCaption);
+
+    // finally, destroy self
+    free((*Entry));
+
+}
+
+/* ------------------------------------------------------------ */
+
 /* --------------- Entry Setters --------------- */
 void setEntryTimeStamp(Entry** Entry, struct timeval* newTimeStamp){
 
@@ -19,11 +51,21 @@ void setEntryPubID(Entry** Entry, int newPubID){
 }
 
 void setEntryPhotoURL(Entry** Entry, char** newPhotoURL){
-    strcpy((*Entry)->photoURL, *newPhotoURL);
+    if(newPhotoURL == NULL){
+        (*Entry)->photoURL = NULL;
+    
+    } else {
+        strcpy((*Entry)->photoURL, *newPhotoURL);
+    }
 }
 
 void setEntryPhotoCaption(Entry** Entry, char** newPhotoCaption){
-    strcpy((*Entry)->photoCaption, *newPhotoCaption);
+    if(newPhotoCaption == NULL){
+        (*Entry)->photoCaption = NULL;
+    
+    } else {
+        strcpy((*Entry)->photoCaption, *newPhotoCaption);
+    }
 }
 /* -------------------------------------------------- */
 

@@ -22,6 +22,11 @@ default: server
 server:  Entry.o main.o
 	$(CC) $(CFLAGS) -o server Entry.o main.o
 
+# Rule for testing just the Entry object
+entry_test: Entry.o entry_test.o
+	$(CC) $(CFLAGS) -o entry_test Entry.o entry_test.o
+
+
 # To create the object file entries.o, we need the source
 # file(s) entries.c and the header file entries.h:
 #
@@ -30,6 +35,9 @@ Entry.o: Entry.c
 
 main.o: main.c
 	$(CC) $(CFLAGS) -c main.c
+
+entry_test.o: entry_test.c
+	$(CC) $(CFLAGS) -c entry_test.c
 
 clean: 
 	$(RM) server log.txt *.o *~

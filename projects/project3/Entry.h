@@ -1,3 +1,5 @@
+#include <sys/time.h>
+
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -18,9 +20,16 @@ typedef struct Entry{
     int entryNum;
     struct timeval timeStamp;
     int pubID;
-    char photoURL[URLSIZE]; // URL to photo
-    char photoCaption[CAPSIZE]; // photo caption
+    char* photoURL; // URL to photo
+    char* photoCaption; // photo caption
 } Entry;
+
+/* --------------- Entry Constructor/Destructor --------------- */
+void initializeEntry(Entry** Entry);
+void destroyEntry(Entry** Entry);
+
+/* ------------------------------------------------------------ */
+
 
 /* --------------- Entry Setters --------------- */
 void setEntryTimeStamp(Entry** Entry, struct timeval* newTimeStamp);
