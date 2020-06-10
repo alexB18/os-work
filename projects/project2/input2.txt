@@ -1,0 +1,3 @@
+ls -a -b -c ; ooh tough
+test
+test ; test ; test
