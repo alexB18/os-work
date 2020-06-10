@@ -2,56 +2,56 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "topics.h"
+#include "Entry.h"
 
-/* --------------- topicEntry Setters --------------- */
-void setEntryTimeStamp(topicEntry** Entry, struct timeval* newTimeStamp){
+/* --------------- Entry Setters --------------- */
+void setEntryTimeStamp(Entry** Entry, struct timeval* newTimeStamp){
 
     memcpy(&(*Entry)->timeStamp, newTimeStamp, sizeof(*newTimeStamp));
 }
 
-void setEntryNum(topicEntry** Entry, int newEntryNum){
+void setEntryNum(Entry** Entry, int newEntryNum){
     (*Entry)->entryNum = newEntryNum;
 }
 
-void setEntryPubID(topicEntry** Entry, int newPubID){
+void setEntryPubID(Entry** Entry, int newPubID){
     (*Entry)->pubID = newPubID;
 }
 
-void setEntryPhotoURL(topicEntry** Entry, char** newPhotoURL){
+void setEntryPhotoURL(Entry** Entry, char** newPhotoURL){
     strcpy((*Entry)->photoURL, *newPhotoURL);
 }
 
-void setEntryPhotoCaption(topicEntry** Entry, char** newPhotoCaption){
+void setEntryPhotoCaption(Entry** Entry, char** newPhotoCaption){
     strcpy((*Entry)->photoCaption, *newPhotoCaption);
 }
 /* -------------------------------------------------- */
 
 
-/* --------------- topicEntry Getters --------------- */
-struct timeval getEntryTimeStamp(topicEntry** Entry){
+/* --------------- Entry Getters --------------- */
+struct timeval getEntryTimeStamp(Entry** Entry){
     return (*Entry)->timeStamp;
 }
 
-int getEntryNum(topicEntry** Entry){
+int getEntryNum(Entry** Entry){
     return (*Entry)->entryNum;
 }
 
-int getEntryPubID(topicEntry** Entry){
+int getEntryPubID(Entry** Entry){
     return (*Entry)->pubID;
 }
 
-char* getEntryPhotoURL(topicEntry** Entry){
+char* getEntryPhotoURL(Entry** Entry){
     return (*Entry)->photoURL;
 }
 
-char* getEntryPhotoCaption(topicEntry** Entry){
+char* getEntryPhotoCaption(Entry** Entry){
     return (*Entry)->photoCaption;
 }
 /* -------------------------------------------------- */
 
-/* --------------- topicEntry Helpers --------------- */
-void printEntryStatus(topicEntry** Entry){
+/* --------------- Entry Helpers --------------- */
+void printEntryStatus(Entry** Entry){
 
     // Print Entry time stamp in seconds.milliseconds
     fprintf(stdout, "Time: %li.%li s\n", getEntryTimeStamp(Entry).tv_sec, getEntryTimeStamp(Entry).tv_usec);

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <string.h>
-#include "topics.h"
+#include "Entry.h"
 
 int main(int argc, char **argv){
 
@@ -23,10 +23,10 @@ int main(int argc, char **argv){
     char* E2_caption = "Flip the iceburg!";
 
     // Allocate memory for new entries & initialize attributes
-    // Start by declaring TopicEntry pointers
-    TopicEntry* E0 = NULL;
-    TopicEntry* E1 = NULL;
-    TopicEntry* E2 = NULL;
+    // Start by declaring Entry pointers
+    Entry* E0 = NULL;
+    Entry* E1 = NULL;
+    Entry* E2 = NULL;
 
     // E0
     initializeEntry(&E0, entryNum, 00000);

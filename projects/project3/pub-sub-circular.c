@@ -8,7 +8,6 @@
 #define RANDOMDIVISOR	100000000
 #define TRUE 1
 #define	ENTRYLENGTH	80	// entry length
-#define	NUMENTRIES	100	// entry length
 #define	BUFFERSIZE	100	// buffer size
 #define NUMBUFFERS	10	// number of buffers
 #define MAXPUBS		50	// maximum number of publishers
@@ -56,7 +55,7 @@ int i, j, k;
     buffers[i].head = 0;	// head index
     buffers[i].tail = 0;	// tail index
     buffers[i].inserted = 0;	// # entries inserted in buffer overall
-    buffers[i].entries = (struct entry *) malloc(sizeof(struct entry) * NUMENTRIES);
+    buffers[i].entries = (struct entry *) malloc(sizeof(struct entry) * BUFFERSIZE);
   }
 
   // create the buffer semaphores
@@ -72,6 +71,7 @@ int i, j, k;
 
 int enqueue(int buffid) {
   
+  // Make struct that *contains* the bounded queue.
   if (buffers[buffid].count == BUFFERSIZE) {
     return(-1);		// buffer is full
   }
