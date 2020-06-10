@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <string.h>
-#include "Entry.h"
+#include "Buffer.h"
 
 int main(int argc, char **argv){
 
     /* ---- Initialize entry variables ---- */
+    /*
     //struct timeval entryTimeStamp;
     int entryNum = 0;
 
@@ -62,4 +63,22 @@ int main(int argc, char **argv){
     destroyEntry(&E0);
     destroyEntry(&E1);
     destroyEntry(&E2);
+    */
+
+    // Allocate memory for each Buffer
+    Buffer* B0 = (Buffer*) malloc(sizeof(Buffer));
+    Buffer* B1 = (Buffer*) malloc(sizeof(Buffer));
+    Buffer* B2 = (Buffer*) malloc(sizeof(Buffer));
+
+    // Initialize each Buffer
+    initializeBuffer(&B0);
+    initializeBuffer(&B1);
+    initializeBuffer(&B2);
+
+    // Destroy Each Buffer
+    destroyBuffer(&B0);
+    destroyBuffer(&B1);
+    destroyBuffer(&B2);
+
+
 }

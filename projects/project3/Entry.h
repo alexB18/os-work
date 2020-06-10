@@ -4,10 +4,6 @@
 #define TRUE 1
 #endif
 
-#ifndef BUFFERSIZE
-#define BUFFERSIZE 256  // buffer size
-#endif
-
 #ifndef URLSIZE
 #define URLSIZE 256 // URL String length
 #endif
