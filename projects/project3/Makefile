@@ -40,7 +40,7 @@ entry_test.o: entry_test.c
 	$(CC) $(CFLAGS) -c entry_test.c
 
 clean: 
-	$(RM) server log.txt *.o *~
+	$(RM) server entry_test log.txt *.o *~
 
 # To run valgrind, type 'make val-file'
 # Valgrind will run a leak check and store the
