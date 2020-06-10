@@ -19,8 +19,8 @@ default: server
 # To create the executable file count we need the object file(s)
 # part1.o:
 #
-server:  Entry.o main.o
-	$(CC) $(CFLAGS) -o server Entry.o main.o
+server:  Entry.o Buffer.o main.o
+	$(CC) $(CFLAGS) -o server Entry.o Buffer.o main.o
 
 # Rule for testing just the Entry object
 entry_test: Entry.o entry_test.o
@@ -32,6 +32,9 @@ entry_test: Entry.o entry_test.o
 #
 Entry.o: Entry.c
 	$(CC) $(CFLAGS) -c Entry.c
+
+Buffer.o: Buffer.c
+	$(CC) $(CFLAGS) -c Buffer.c
 
 main.o: main.c
 	$(CC) $(CFLAGS) -c main.c
