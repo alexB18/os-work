@@ -117,13 +117,22 @@ void incrementBufferInsertedCount(Buffer** Buffer){
 
 /* --------------------- Buffer Helpers ---------------------- */
 
-void printBufferStatus(Buffer** Buffer){
+void printLimitedBufferStatus(Buffer** Buffer){
 
     fprintf(stdout, "Entry Count: %i\n", getBufferEntryCount(Buffer));
     fprintf(stdout, "Head Index: %i\n", getBufferHeadIndex(Buffer));
     fprintf(stdout, "Tail Index: %i\n", getBufferTailIndex(Buffer));
     fprintf(stdout, "Entry Count: %i\n", getBufferEntryCount(Buffer));
 
+}
+
+void printFullBufferStatus(Buffer** Buffer){
+    printLimitedBufferStatus(Buffer);
+    fprintf(stdout, "-------------------------------------------------\n");
+    for(int i = 0; i < MAXENTRIES; i++){
+        printEntryStatus(&((*Buffer)->entries[i]));
+    }
+    
 }
 
 /* ----------------------------------------------------------- */

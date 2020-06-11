@@ -54,7 +54,7 @@ clean:
 # Valgrind will run a leak check and store the
 # results in log.txt
 val: server
-	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./server > log.txt 2>&1
+	valgrind -v --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./server > log.txt 2>&1
 
 val_entry_test: entry_test
 	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./entry_test > log.txt 2>&1

@@ -2,7 +2,7 @@
 #include "Entry.h"
 
 #ifndef MAXENTRIES
-#define MAXENTRIES 256  // buffer size
+#define MAXENTRIES 10  // buffer size
 #endif
 
 typedef struct Buffer {
@@ -30,6 +30,7 @@ void incrementBufferInsertedCount(Buffer** Buffer);
 
 /* --------------------- Buffer Helpers ---------------------- */
 
-void printBufferStatus(Buffer** Buffer);
+void printLimitedBufferStatus(Buffer** Buffer);
+void printFullBufferStatus(Buffer** Buffer);
 
 /* ------------------------------------------------------------ */

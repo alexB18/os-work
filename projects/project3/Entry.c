@@ -11,9 +11,16 @@ void initializeEntry(Entry** Entry){
     (*Entry)->photoURL = (char*) malloc(URLSIZE + 1 * sizeof(char));
     (*Entry)->photoCaption = (char*) malloc(CAPSIZE + 1 * sizeof(char));
 
+    // Initialize URL and Caption to default values
+    char* photoURL_EMPTY = "";
+    char* photoCaption_EMPTY = "";
+
+    setEntryPhotoURL(Entry, &photoURL_EMPTY);
+    setEntryPhotoCaption(Entry, &photoCaption_EMPTY);
+
     // get execution time
-    struct timeval executionTime;
-    gettimeofday(&executionTime, NULL);
+    struct timeval executionTime = (struct timeval){0};
+    //gettimeofday(&executionTime, NULL);
 
     // set Entry's attributes to defaults
     setEntryNum(Entry, -1);
