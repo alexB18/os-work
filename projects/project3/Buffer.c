@@ -20,10 +20,10 @@ void initializeBuffer(Buffer** Buffer){
     }
 
     // set the rest of the Buffer's attributes to default values
-    (*Buffer)->count = -1;
-    (*Buffer)->head = -1;
-    (*Buffer)->tail = -1;
-    (*Buffer)->inserted = -1;
+    (*Buffer)->count = 0;
+    (*Buffer)->head = 0;
+    (*Buffer)->tail = 0;
+    (*Buffer)->size = 0;
 
 }
 

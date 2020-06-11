@@ -6,7 +6,7 @@
 #endif
 
 typedef struct Buffer {
-    int count, head, tail, inserted;
+    int count, head, tail, size;
     struct Entry** entries;
 } Buffer;
 
