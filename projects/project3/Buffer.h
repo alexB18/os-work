@@ -13,5 +13,7 @@ typedef struct Buffer {
 /* --------------- Buffer Constructor/Destructor -------------- */
 void initializeBuffer(Buffer** Buffer);
 void destroyBuffer(Buffer** Buffer);
+/* ------------------------------------------------------------ */
 
+/* ------------------ Enqueue/Dequeue methods ----------------- */
 /* ------------------------------------------------------------ */

@@ -26,6 +26,8 @@ server:  Entry.o Buffer.o main.o
 entry_test: Entry.o entry_test.o
 	$(CC) $(CFLAGS) -o entry_test Entry.o entry_test.o
 
+buffer_test: Buffer.o Entry.o buffer_test.o
+	$(CC) $(CFLAGS) -o buffer_test Buffer.o Entry.o buffer_test.o
 
 # To create the object file entries.o, we need the source
 # file(s) entries.c and the header file entries.h:
@@ -42,13 +44,23 @@ main.o: main.c
 entry_test.o: entry_test.c
 	$(CC) $(CFLAGS) -c entry_test.c
 
+buffer_test.o: buffer_test.c
+	$(CC) $(CFLAGS) -c buffer_test.c
+
 clean: 
-	$(RM) server entry_test log.txt *.o *~
+	$(RM) server  log.txt *.o *~ *_test
 
 # To run valgrind, type 'make val-file'
 # Valgrind will run a leak check and store the
 # results in log.txt
 val: server
 	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./server > log.txt 2>&1
+
+val_entry_test: entry_test
+	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./entry_test > log.txt 2>&1
+
+val_buffer_test: buffer_test
+	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./buffer_test > log.txt 2>&1
+
 
 
