@@ -29,6 +29,15 @@ int main(int argc, char **argv){
     // Create the buffer semaphores
     for(int i = 0; i < NUMBUFFERS; i++){
         pthread_mutex_init(&(mutex[i]), NULL);
+        sem_init(&full[i], 0, 0);
+        sem_init(&empty[i], 0, MAXENTRIES);
+    }
+
+    // Print the status of each Buffer
+    for(int i = 0; i < NUMBUFFERS; i++){
+        fprintf(stdout, "Buffer[%i]\n", i);
+        printBufferStatus(&Buffers[i]);
+        fprintf(stdout, "\n");
     }
 
     // Destroy Each Buffer

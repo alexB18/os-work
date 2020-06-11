@@ -1,12 +1,12 @@
 #include <sys/time.h>
 #include "Entry.h"
 
-#ifndef BUFFERSIZE
-#define BUFFERSIZE 256  // buffer size
+#ifndef MAXENTRIES
+#define MAXENTRIES 256  // buffer size
 #endif
 
 typedef struct Buffer {
-    int count, head, tail, size;
+    int entryCount, head, tail, insertedCount;
     struct Entry** entries;
 } Buffer;
 
@@ -15,5 +15,21 @@ void initializeBuffer(Buffer** Buffer);
 void destroyBuffer(Buffer** Buffer);
 /* ------------------------------------------------------------ */
 
-/* ------------------ Enqueue/Dequeue methods ----------------- */
+/* --------------- Buffer Getters and Setters ----------------- */
+int getBufferEntryCount(Buffer** Buffer);
+int getBufferHeadIndex(Buffer** Buffer);
+int getBufferTailIndex(Buffer** Buffer);
+int getBufferInsertedCount(Buffer** Buffer);
+
+int incrementBufferEntryCount(Buffer** Buffer);
+int decrementBufferEntryCount(Buffer** Buffer);
+void setBufferHeadIndex(Buffer** Buffer, int head);
+void setBufferTailIndex(Buffer** Buffer, int tail);
+void incrementBufferInsertedCount(Buffer** Buffer);
+/* ------------------------------------------------------------ */
+
+/* --------------------- Buffer Helpers ---------------------- */
+
+void printBufferStatus(Buffer** Buffer);
+
 /* ------------------------------------------------------------ */

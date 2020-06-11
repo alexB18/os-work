@@ -20,7 +20,7 @@ default: server
 # part1.o:
 #
 server:  Entry.o Buffer.o main.o
-	$(CC) $(CFLAGS) -o server Entry.o Buffer.o main.o
+	$(CC) $(CFLAGS) -pthread -o server Entry.o Buffer.o main.o
 
 # Rule for testing just the Entry object
 entry_test: Entry.o entry_test.o
