@@ -39,7 +39,7 @@
 int MODE;
 // Pointer which will hold an array of all valid commands
 char** VALID_COMMANDS;
-int NUM_OF_COMMANDS = 8;
+int NUM_OF_COMMANDS = 9;
 
 /*--------------------------- Helper Functions ------------------------------*/
 
@@ -226,6 +226,7 @@ int main(int argc, char** argv) {
 	VALID_COMMANDS[5] = "mv";
 	VALID_COMMANDS[6] = "rm";
 	VALID_COMMANDS[7] = "cat";
+	VALID_COMMANDS[8] = "exit";
 
 	/* Main Function Variables */
 	int CONTINUE = 1;
@@ -263,6 +264,7 @@ int main(int argc, char** argv) {
 			free(savePtr);
 			free(tokens);
 			free(VALID_COMMANDS);
+			fclose(outFilePointer);
 			exit(EXIT_FAILURE);
 		}
 
@@ -292,7 +294,7 @@ int main(int argc, char** argv) {
 
 
 		// Strip newline at the end of the input string
-		inBufferPtr[strlen(inBufferPtr) - 1] = '\0';
+		//inBufferPtr[strlen(inBufferPtr) - 1] = '\0';
 
 		// Save copy of inBufferPointer
 		*savePtr = inBufferPtr;
@@ -306,20 +308,16 @@ int main(int argc, char** argv) {
 		/* Tokenize and process the input string. Remember there can be multiple
 		calls to lfcat. i.e. lfcat ; lfcat <-- valid*/
 		i = 0;
-		while ((token = strtok_r(*savePtr, " ", savePtr))){
+		while ((token = strtok_r(*savePtr, " \n", savePtr))){
 			// Set error flag and control code flag back to 0
 			TOKEN_ERROR = 0;
 			CONTROL_CODE = 0;
 
-			
-			// If the user entered <exit> then exit *both* loops
-			if(strcmp(token, "exit") == 0){
-					CONTINUE = 0;
-					break;	
+		
 
 			/* If the token is control code, we need to check to make sure it isn't 
 			at the end of the line*/
-			} else if(strcmp(token, ";") == 0){
+			if(strcmp(token, ";") == 0){
 
 				//If tokens isn't empty, then we need to call execUnixCmd on it
 				if( tokens != NULL){
@@ -336,6 +334,12 @@ int main(int argc, char** argv) {
 
 			// If the current token is a valid command, we need to make sure it's the only one
 			} else if(isValidCommand(token)){
+
+// If the user entered <exit> then exit *both* loops
+				if(strcmp(token, "exit") == 0){
+					CONTINUE = 0;
+					break;	
+				}
 
 				if(i > 0){
 					fprintf(stderr, "Error! Incorrect syntax. No control code found.\n");
@@ -355,6 +359,12 @@ int main(int argc, char** argv) {
 					break;
 				}
 
+				if(i >= tokenBuffer){
+					fprintf(stderr, "Error! Too many parameters for command: %s\n\n", tokens[0]);
+					TOKEN_ERROR = 1;
+					break;
+				}
+
 				tokens[i] = token;
 			}
 
@@ -369,7 +379,8 @@ int main(int argc, char** argv) {
 		then we've stumbled into the case where the last argument is ; and we
 		need to print an error message*/
 		if(CONTROL_CODE){
-			fprintf(stderr, "Error! Unrecognized command: \n\n");
+			fprintf(stderr, "Error! Unrecognized command: \n");
+			CONTROL_CODE = 0;
 		}
 
 
