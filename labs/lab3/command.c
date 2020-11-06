@@ -56,8 +56,8 @@ void lfcat()
 
 		// Hint: use an if statement to skip any names that are not readable files (e.g. ".", "..", "main.c", "a.out", "output.txt"
 		if
-			(
-			(strcmp(currentFilePtr->d_name, "main.c") == 0) ||
+			(!
+			((strcmp(currentFilePtr->d_name, "main.c") == 0) ||
 			(strcmp(currentFilePtr->d_name, "main.o") == 0) ||
 			(strcmp(currentFilePtr->d_name, "command.c") == 0) ||
 			(strcmp(currentFilePtr->d_name, "command.h") == 0) ||
@@ -71,46 +71,44 @@ void lfcat()
 			(strcmp(currentFilePtr->d_name, "input.txt") == 0) ||
 			(strcmp(currentFilePtr->d_name, "output.txt") == 0) ||
 			(strcmp(currentFilePtr->d_name, "res_output.txt") == 0)
-			)
+			))
 		{
-			continue;
-		
-		} else {
-			//fprintf(stdout,"Name: %s\n",currentFilePtr->d_name);
-			write(1, "Name: ", sizeof("Name: "));
-			write(1, currentFilePtr->d_name, sizeof(currentFilePtr->d_name+1));
-			write(1, "\n", sizeof("\n"));
-		
 			
-			// Open the file
-			inFilePtr = fopen(currentFilePtr->d_name, "r");
+//fprintf(stdout,"Name: %s\n",currentFilePtr->d_name);
+		write(1, "Name: ", sizeof("Name: "));
+		write(1, currentFilePtr->d_name, sizeof(currentFilePtr->d_name+1));
+		write(1, "\n", sizeof("\n"));
+	
+		
+		// Open the file
+		inFilePtr = fopen(currentFilePtr->d_name, "r");
 
-			// Check if input file was succesffully opened
-			if(inFilePtr == NULL){
-				fprintf(stderr, "fopen() failed to open file %s\n", currentFilePtr->d_name);
-				exit(EXIT_FAILURE);
-			}
-
-			//write(1, ("File: %s", currentFilePtr->d_name), bufferSize);
-			// Read in each line using getline()
-			while((numCharacters = getline(&currentLine, &bufferSize, inFilePtr)) != -1){
-				// Write the line to stdout
-				write(1, currentLine, numCharacters);
-				//fprintf(stdout, "%s", currentLine);
-			}
-
-			// write 80 "-" characters to stdout
-			for(int i = 0; i < 80; i++){
-				write(1, "-", 1);
-				//fprintf(stdout, "-");
-			}
-			write(1, "\n", 1);
-
-			// close the read file and free/null assign your line buffer
-			fclose(inFilePtr);
-			//currentLine = NULL;
-			
+		// Check if input file was succesffully opened
+		if(inFilePtr == NULL){
+			fprintf(stderr, "fopen() failed to open file %s\n", currentFilePtr->d_name);
+			exit(EXIT_FAILURE);
 		}
+
+		//write(1, ("File: %s", currentFilePtr->d_name), bufferSize);
+		// Read in each line using getline()
+		while((numCharacters = getline(&currentLine, &bufferSize, inFilePtr)) != -1){
+			// Write the line to stdout
+			write(1, currentLine, numCharacters);
+			//fprintf(stdout, "%s", currentLine);
+		}
+
+		// write 80 "-" characters to stdout
+		for(int i = 0; i < 80; i++){
+			write(1, "-", 1);
+			//fprintf(stdout, "-");
+		}
+		write(1, "\n", 1);
+
+		// close the read file and free/null assign your line buffer
+		fclose(inFilePtr);
+		//currentLine = NULL;
+		}
+
 
 	}
 
