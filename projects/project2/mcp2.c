@@ -178,12 +178,42 @@ int main(int argc, char** argv){
             int status = sigwait(&set, &sig);
             if(status != 0){
                 fprintf(stderr, "Sigwait error with process: %d\n", getpid());
+
+                //Now we can start deallocating our pid_t and programs array
+                for(int i = 0; i < numPrograms; i++){
+                    //free(pid[i]);
+                    free(programs[i]);
+                }
+
+                free(programs);
+                free(pid);
+                //free(programs);
+
+                // Free allocated memory
+                free(currentLinePtr);
+                free(lineSavePtr);
+                free(args);
                 exit(-1);
             
             } else {
 
                 // Make exec call
                 execvp(args[0], args);
+
+                //Now we can start deallocating our pid_t and programs array
+                for(int i = 0; i < numPrograms; i++){
+                    //free(pid[i]);
+                    free(programs[i]);
+                }
+
+                free(programs);
+                free(pid);
+                //free(programs);
+
+                // Free allocated memory
+                free(currentLinePtr);
+                free(lineSavePtr);
+                free(args);
 
                 // Exit when finished
                 exit(-1);
@@ -235,7 +265,7 @@ int main(int argc, char** argv){
         fprintf(stdout, "Process: %d received SIGSTOP. Waiting...\n", pid[i]);
     }
     fprintf(stdout, "\n");
-    sleep(1);
+    sleep(15);
 
     // Once they've been suspended, we want to resume them
     for(int i = 0; i < numPrograms; i++){

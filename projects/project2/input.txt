@@ -1,5 +1,9 @@
-ls -a -r -s
-sleep 1
-invalid name
-./iobound -seconds 2
+fake name
+ls ; ls
+./iobound -seconds 7
+./cpubound -seconds 3
+./cpubound -seconds 4
+./cpubound -seconds 2
+./cpubound -seconds 1
+./cpubound -seconds 5
 ./cpubound -seconds 2

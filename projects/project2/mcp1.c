@@ -95,6 +95,15 @@ int main(int argc, char** argv){
     // Check if input file exists, exit otherwise
     if(inFilePtr == NULL){
 		fprintf(stderr, "freopen() failed to open file %s\n", inFileName);
+
+        //Now we can start deallocating our pid_t and programs array
+        for(int i = 0; i < numPrograms; i++){
+            //free(pid[i]);
+            free(programs[i]);
+        }
+        free(programs);
+        free(pid);
+        free(args);
         free(currentLinePtr);
         free(lineSavePtr);
         exit(EXIT_FAILURE);
@@ -149,6 +158,20 @@ int main(int argc, char** argv){
         // Case where new process wasn't created correctly
         if (pid[lineCounter] < 0) {
             fprintf(stderr, "ERROR! Unable to fork program[%i]: %s.\n", lineCounter, args[0]);
+
+            //Now we can start deallocating our pid_t and programs array
+            for(int i = 0; i < numPrograms; i++){
+                //free(pid[i]);
+                free(programs[i]);
+            }
+            free(programs);
+            free(pid);
+            //free(programs);
+
+            // Free allocated memory
+            free(currentLinePtr);
+            free(lineSavePtr);
+            free(args);
             exit(-1);
         }
 
@@ -156,6 +179,20 @@ int main(int argc, char** argv){
         else if (pid[lineCounter] == 0) {
             // Make exec call
             execvp(args[0], args);
+            //Now we can start deallocating our pid_t and programs array
+            for(int i = 0; i < numPrograms; i++){
+                //free(pid[i]);
+                free(programs[i]);
+            }
+
+            free(programs);
+            free(pid);
+            //free(programs);
+
+            // Free allocated memory
+            free(currentLinePtr);
+            free(lineSavePtr);
+            free(args);
 
             // Exit when finished
             exit(-1);
