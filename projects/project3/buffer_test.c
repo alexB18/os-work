@@ -33,10 +33,13 @@ int main(int argc, char **argv){
         sem_init(&empty[i], 0, MAXENTRIES);
     }
 
+    // Enqueue data to buffer 0
+    
+
     // Print the status of each Buffer
     for(int i = 0; i < NUMBUFFERS; i++){
         fprintf(stdout, "Buffer[%i]\n", i);
-        printBufferStatus(&Buffers[i]);
+        printFullBufferStatus(&Buffers[i]);
         fprintf(stdout, "\n");
     }
 

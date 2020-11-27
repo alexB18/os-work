@@ -7,7 +7,7 @@
 
 typedef struct Buffer {
     int entryCount, head, tail, insertedCount;
-    struct Entry** entries;
+    struct topicEntry** entries;
 } Buffer;
 
 /* --------------- Buffer Constructor/Destructor -------------- */

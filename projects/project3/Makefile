@@ -14,7 +14,7 @@ CFLAGS  = -g -Wall
 # you can name this target entry anything, but "default" or "all"
 # are the most commonly used names by convention
 #
-default: server
+default: server buffer_test entry_test
 
 # To create the executable file count we need the object file(s)
 # part1.o:
@@ -24,10 +24,10 @@ server:  Entry.o Buffer.o main.o
 
 # Rule for testing just the Entry object
 entry_test: Entry.o entry_test.o
-	$(CC) $(CFLAGS) -o entry_test Entry.o entry_test.o
+	$(CC) $(CFLAGS) -pthread -o entry_test Entry.o entry_test.o
 
 buffer_test: Buffer.o Entry.o buffer_test.o
-	$(CC) $(CFLAGS) -o buffer_test Buffer.o Entry.o buffer_test.o
+	$(CC) $(CFLAGS) -pthread -o buffer_test Buffer.o Entry.o buffer_test.o
 
 # To create the object file entries.o, we need the source
 # file(s) entries.c and the header file entries.h:

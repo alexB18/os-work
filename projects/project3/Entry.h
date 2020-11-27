@@ -12,7 +12,7 @@
 #define CAPSIZE 512 // Caption String length
 #endif
 
-typedef struct Entry{
+typedef struct topicEntry{
     int entryNum;
     struct timeval timeStamp;
     int pubID;
