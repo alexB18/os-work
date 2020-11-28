@@ -205,6 +205,9 @@ int enqueue(Buffer** Buffer, Entry** Entry){
     /* ---------------------------------------------*/
 
     /* --- Store Entry in address indicated by head --- */
+
+    //destroy entry in current spot to make way for new
+    destroyEntry(&(*Buffer)->entries[getBufferHeadIndex(Buffer)]);
     // push Entry to Buffer
     (*Buffer)->entries[getBufferHeadIndex(Buffer)] = *Entry;
 
