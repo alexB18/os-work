@@ -21,8 +21,10 @@ typedef struct topicEntry{
 } Entry;
 
 /* --------------- Entry Constructor/Destructor --------------- */
+Entry* constructEntry();
 void initializeEntry(Entry** Entry);
 void destroyEntry(Entry** Entry);
+void resetEntry(Entry** Entry);
 
 /* ------------------------------------------------------------ */
 

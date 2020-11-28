@@ -7,27 +7,31 @@
 /* --------------- Entry Constructor/Destructor --------------- */
 void initializeEntry(Entry** Entry){
 
-    // allocate memory for URL and Caption
-    (*Entry)->photoURL = (char*) malloc(URLSIZE + 1 * sizeof(char));
-    (*Entry)->photoCaption = (char*) malloc(CAPSIZE + 1 * sizeof(char));
-
-    // Initialize URL and Caption to default values
-    char* photoURL_EMPTY = "";
-    char* photoCaption_EMPTY = "";
-
-    setEntryPhotoURL(Entry, &photoURL_EMPTY);
-    setEntryPhotoCaption(Entry, &photoCaption_EMPTY);
-
     // get execution time
     struct timeval executionTime = (struct timeval){0};
     //gettimeofday(&executionTime, NULL);
+
+    char* photoURL_EMPTY = "NULL";
+    char* photoCaption_EMPTY = "NULL";
 
     // set Entry's attributes to defaults
     setEntryNum(Entry, -1);
     setEntryTimeStamp(Entry, &executionTime);
     setEntryPubID(Entry, -1);
-    //setEntryPhotoURL(Entry, NULL);
-    //setEntryPhotoCaption(Entry, NULL);
+    setEntryPhotoURL(Entry, &photoURL_EMPTY);
+    setEntryPhotoCaption(Entry, &photoCaption_EMPTY);
+}
+
+Entry* constructEntry(){
+
+    Entry* retEntry = (Entry*) malloc(sizeof(Entry));
+
+    retEntry->photoURL = (char*) malloc(URLSIZE + 1 * sizeof(char));
+    retEntry->photoCaption = (char*) malloc(CAPSIZE + 1 * sizeof(char));
+
+    initializeEntry(&retEntry);
+
+    return retEntry;
 }
 
 void destroyEntry(Entry** Entry){
