@@ -22,16 +22,10 @@ int main(int argc, char **argv){
     char* E2_photoURL = "www.clubpenguin.com";
     char* E2_caption = "Flip the iceburg!";
 
-    // Allocate memory for new entries & initialize attributes
-    // Start by declaring Entry pointers
-    Entry* E0 = (Entry*) malloc(sizeof(Entry));
-    Entry* E1 = (Entry*) malloc(sizeof(Entry));
-    Entry* E2 = (Entry*) malloc(sizeof(Entry));
-
-    // Initialize Entries;
-    initializeEntry(&E0);
-    initializeEntry(&E1);
-    initializeEntry(&E2);
+    // Create Entries
+    Entry* E0 = constructEntry();
+    Entry* E1 = constructEntry();
+    Entry* E2 = constructEntry();
 
     // E0
     setEntryNum(&E0, entryNum);

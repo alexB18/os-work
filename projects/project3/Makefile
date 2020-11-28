@@ -24,7 +24,7 @@ server:  Entry.o Buffer.o main.o
 
 # Rule for testing just the Entry object
 entry_test: Entry.o entry_test.o
-	$(CC) $(CFLAGS) -pthread -o entry_test Entry.o entry_test.o
+	$(CC) $(CFLAGS) -o entry_test Entry.o entry_test.o
 
 buffer_test: Buffer.o Entry.o buffer_test.o
 	$(CC) $(CFLAGS) -pthread -o buffer_test Buffer.o Entry.o buffer_test.o

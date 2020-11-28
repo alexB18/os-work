@@ -6,7 +6,7 @@
 #include <string.h>
 #include "Buffer.h"
 
-#define NUMBUFFERS 10
+#define NUMBUFFERS 1
 
 struct Buffer** Buffers; // buffers
 
@@ -20,10 +20,7 @@ int main(int argc, char **argv){
     for(int i = 0; i < NUMBUFFERS; i++){
 
         // Allocate memory for each Buffer
-        Buffers[i] = (Buffer*) malloc(sizeof(Buffer));
-
-        // Initialize each Buffer
-        initializeBuffer(&(Buffers[i]));
+        Buffers[i] = constructBuffer();
     }
 
     // Create the buffer semaphores
@@ -33,8 +30,15 @@ int main(int argc, char **argv){
         sem_init(&empty[i], 0, MAXENTRIES);
     }
 
-    // Enqueue data to buffer 0
-    
+/*
+    Entry* Entry1 = (Entry*) malloc(sizeof(Entry));
+    initializeEntry(&Entry1);
+    enqueue(&(Buffers[0]), &Entry1);
+*/
+
+    // Am having problem of creating new Entries
+    // Gonna change constructor to return Entry
+
 
     // Print the status of each Buffer
     for(int i = 0; i < NUMBUFFERS; i++){
@@ -42,6 +46,8 @@ int main(int argc, char **argv){
         printFullBufferStatus(&Buffers[i]);
         fprintf(stdout, "\n");
     }
+
+    //dequeue(&(Buffers[0]));
 
     // Destroy Each Buffer
     for(int i = 0; i < NUMBUFFERS; i++){
