@@ -30,11 +30,8 @@ int main(int argc, char **argv){
         sem_init(&empty[i], 0, MAXENTRIES);
     }
 
-/*
-    Entry* Entry1 = (Entry*) malloc(sizeof(Entry));
-    initializeEntry(&Entry1);
+    Entry* Entry1 = constructEntry();
     enqueue(&(Buffers[0]), &Entry1);
-*/
 
     // Am having problem of creating new Entries
     // Gonna change constructor to return Entry
@@ -47,7 +44,7 @@ int main(int argc, char **argv){
         fprintf(stdout, "\n");
     }
 
-    //dequeue(&(Buffers[0]));
+    dequeue(&(Buffers[0]));
 
     // Destroy Each Buffer
     for(int i = 0; i < NUMBUFFERS; i++){
