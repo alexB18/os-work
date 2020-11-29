@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <pthread.h>
 #include <semaphore.h>
 #include <sys/time.h>
@@ -64,12 +65,6 @@ int main(int argc, char **argv){
     setEntryPhotoURL(&Entry0, &Entry0_url);
     setEntryPhotoCaption(&Entry0, &Entry0_caption);
     enqueue(&(TopicQueues[0]), &Entry0);
-
-
-    
-    
-    
-    
     
     Entry* Entry1 = constructEntry();
     char* Entry1_caption = "hold onto ur butts!";
@@ -135,6 +130,135 @@ int main(int argc, char **argv){
     setEntryPhotoURL(&Entry9, &Entry9_url);
     setEntryPhotoCaption(&Entry9, &Entry9_caption);
     enqueue(&(TopicQueues[0]), &Entry9);
+
+    Entry* Entry10 = constructEntry();
+    char* Entry10_caption = "hold onto ur butts!";
+    char* Entry10_url = "https://www.google.com";
+    setEntryPhotoURL(&Entry10, &Entry10_url);
+    setEntryPhotoCaption(&Entry10, &Entry10_caption);
+
+    Entry* Entry11 = constructEntry();
+    char* Entry11_caption = "hold onto ur butts!";
+    char* Entry11_url = "https://www.google.com";
+    setEntryPhotoURL(&Entry11, &Entry11_url);
+    setEntryPhotoCaption(&Entry11, &Entry11_caption);
+
+    Entry* Entry12 = constructEntry();
+    char* Entry12_caption = "hold onto ur butts!";
+    char* Entry12_url = "https://www.google.com";
+    setEntryPhotoURL(&Entry12, &Entry12_url);
+    setEntryPhotoCaption(&Entry12, &Entry12_caption);
+    
+    Entry* Entry13 = constructEntry();
+    char* Entry13_caption = "hold onto ur butts!";
+    char* Entry13_url = "https://www.google.com";
+    setEntryPhotoURL(&Entry13, &Entry13_url);
+    setEntryPhotoCaption(&Entry13, &Entry13_caption);
+
+    Entry* Entry14 = constructEntry();
+    char* Entry14_caption = "hold onto ur butts!";
+    char* Entry14_url = "https://www.google.com";
+    setEntryPhotoURL(&Entry14, &Entry14_url);
+    setEntryPhotoCaption(&Entry14, &Entry14_caption);
+
+    Entry* Entry15 = constructEntry();
+    char* Entry15_caption = "hold onto ur butts!";
+    char* Entry15_url = "https://www.google.com";
+    setEntryPhotoURL(&Entry15, &Entry15_url);
+    setEntryPhotoCaption(&Entry15, &Entry15_caption);
+
+    Entry* Entry16 = constructEntry();
+    char* Entry16_caption = "hold onto ur butts!";
+    char* Entry16_url = "https://www.google.com";
+    setEntryPhotoURL(&Entry16, &Entry16_url);
+    setEntryPhotoCaption(&Entry16, &Entry16_caption);
+
+    Entry* Entry17 = constructEntry();
+    char* Entry17_caption = "hold onto ur butts!";
+    char* Entry17_url = "https://www.google.com";
+    setEntryPhotoURL(&Entry17, &Entry17_url);
+    setEntryPhotoCaption(&Entry17, &Entry17_caption);
+
+    Entry* Entry18 = constructEntry();
+    char* Entry18_caption = "hold onto ur butts!";
+    char* Entry18_url = "https://www.google.com";
+    setEntryPhotoURL(&Entry18, &Entry18_url);
+    setEntryPhotoCaption(&Entry18, &Entry18_caption);
+
+    Entry* Entry19 = constructEntry();
+    char* Entry19_caption = "hold onto ur butts!";
+    char* Entry19_url = "https://www.google.com";
+    setEntryPhotoURL(&Entry19, &Entry19_url);
+    setEntryPhotoCaption(&Entry19, &Entry19_caption);
+
+    Entry* Entry20 = constructEntry();
+    char* Entry20_caption = "hold onto ur butts!";
+    char* Entry20_url = "https://www.google.com";
+    setEntryPhotoURL(&Entry20, &Entry20_url);
+    setEntryPhotoCaption(&Entry20, &Entry20_caption);
+
+    Entry* Entry21 = constructEntry();
+    char* Entry21_caption = "hold onto ur butts!";
+    char* Entry21_url = "https://www.google.com";
+    setEntryPhotoURL(&Entry21, &Entry21_url);
+    setEntryPhotoCaption(&Entry21, &Entry21_caption);
+
+
+
+    fprintf(stdout, "\n\n\nWriting to full buffer\n\n\n");
+    sleep(2);
+
+    fprintf(stdout, "Enqueuing Entry: 10\n");
+    sleep(.5);
+    enqueue(&(TopicQueues[0]), &Entry10);
+
+    fprintf(stdout, "Enqueuing Entry: 11\n");
+    sleep(.5);
+    enqueue(&(TopicQueues[0]), &Entry11);
+    
+    fprintf(stdout, "Enqueuing Entry: 12\n");
+    sleep(.5);
+    enqueue(&(TopicQueues[0]), &Entry12);
+
+    fprintf(stdout, "Enqueuing Entry: 13\n");
+    sleep(.5);
+    enqueue(&(TopicQueues[0]), &Entry13);
+
+    fprintf(stdout, "Enqueuing Entry: 14\n");
+    sleep(.5);
+    enqueue(&(TopicQueues[0]), &Entry14);
+
+    fprintf(stdout, "Enqueuing Entry: 15\n");
+    sleep(.5);
+    enqueue(&(TopicQueues[0]), &Entry15);
+
+
+    fprintf(stdout, "Enqueuing Entry: 16\n");
+    sleep(.5);
+    enqueue(&(TopicQueues[0]), &Entry16);
+
+    fprintf(stdout, "Enqueuing Entry: 17\n");
+    sleep(.5);
+    enqueue(&(TopicQueues[0]), &Entry17);
+
+    fprintf(stdout, "Enqueuing Entry: 18\n");
+    sleep(.5);
+    enqueue(&(TopicQueues[0]), &Entry18);
+
+
+    fprintf(stdout, "Enqueuing Entry: 19\n");
+    sleep(.5);
+    enqueue(&(TopicQueues[0]), &Entry19);
+
+    fprintf(stdout, "Enqueuing Entry: 20\n");
+    sleep(.5);
+    enqueue(&(TopicQueues[0]), &Entry20);
+
+    fprintf(stdout, "Enqueuing Entry: 21\n");
+    sleep(.5);
+    enqueue(&(TopicQueues[0]), &Entry21);
+    
+    
 
 
     // Print the status of each TopicQueue

@@ -4,15 +4,15 @@
 #include <semaphore.h>
 #include <sys/time.h>
 #include <string.h>
-#include "Buffer.h"
+#include "TopicQueue.h"
 
-#define NUMBUFFERS 5
+#define NUMQUEUES 5
 
-struct Buffer** Buffers; // buffers
+struct TopicQueue** TopicQueues; // TopicQueues
 
-pthread_mutex_t mutex[NUMBUFFERS]; //mutex locks for buffers
-sem_t full[NUMBUFFERS]; // full semaphores
-sem_t empty[NUMBUFFERS]; // empty semaphores
+pthread_mutex_t mutex[NUMQUEUES]; //mutex locks for TopicQueues
+sem_t full[NUMQUEUES]; // full semaphores
+sem_t empty[NUMQUEUES]; // empty semaphores
 
 int MODE;
 
@@ -65,32 +65,32 @@ int main(int argc, char **argv){
 
     }
 
-    Buffers = (Buffer**) malloc(NUMBUFFERS * sizeof(Buffer*));
-    for(int i = 0; i < NUMBUFFERS; i++){
+    TopicQueues = (TopicQueue**) malloc(NUMQUEUES * sizeof(TopicQueue*));
+    for(int i = 0; i < NUMQUEUES; i++){
 
-        // Construct each Buffer
-        Buffers[i] = constructBuffer();
+        // Construct each TopicQueue
+        TopicQueues[i] = constructTopicQueue();
     }
 
-    // Create the buffer semaphores
-    for(int i = 0; i < NUMBUFFERS; i++){
+    // Create the TopicQueue semaphores
+    for(int i = 0; i < NUMQUEUES; i++){
         pthread_mutex_init(&(mutex[i]), NULL);
         sem_init(&full[i], 0, 0);
         sem_init(&empty[i], 0, MAXENTRIES);
     }
 
-    // Print the status of each Buffer
-    for(int i = 0; i < NUMBUFFERS; i++){
-        fprintf(stdout, "Buffer[%i]\n", i);
-        printFullBufferStatus(&Buffers[i]);
+    // Print the status of each TopicQueue
+    for(int i = 0; i < NUMQUEUES; i++){
+        fprintf(stdout, "TopicQueue[%i]\n", i);
+        printFullTopicQueueStatus(&TopicQueues[i]);
         fprintf(stdout, "\n");
     }
 
-    // Destroy Each Buffer
-    for(int i = 0; i < NUMBUFFERS; i++){
-        destroyBuffer(&(Buffers[i]));
+    // Destroy Each TopicQueue
+    for(int i = 0; i < NUMQUEUES; i++){
+        destroyTopicQueue(&(TopicQueues[i]));
     }
-    free(Buffers);
+    free(TopicQueues);
 
 
 }

@@ -188,16 +188,16 @@ int enqueue(TopicQueue** TopicQueue, Entry** Entry){
     /* ------------  Critical Section ------------- */
     //sleep(4);
 
+    /*
     // Check if TopicQueue is full
     if(isFull(TopicQueue)){
 
         fprintf(stderr, "Error, unable to enqueue Entry: %i, TopicQueue full\n", getEntryNum(Entry));
-        // signal
-        //fprintf(stdout, "stopped enqueing...\n");
-        //sem_post(&mutex);
+
         return -1;
 
     }
+    */
 
 
     /* --------- Prep Entry to be enqued ----------*/

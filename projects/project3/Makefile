@@ -14,23 +14,23 @@ CFLAGS  = -g -Wall
 # you can name this target entry anything, but "default" or "all"
 # are the most commonly used names by convention
 #
-default: server buffer_test buffer_test_advanced entry_test
+default: server queue_test queue_test_advanced entry_test
 
 # To create the executable file count we need the object file(s)
 # part1.o:
 #
-server:  Entry.o Buffer.o main.o
-	$(CC) $(CFLAGS) -pthread -o server Entry.o Buffer.o main.o
+server:  Entry.o TopicQueue.o main.o
+	$(CC) $(CFLAGS) -pthread -o server Entry.o TopicQueue.o main.o
 
 # Rule for testing just the Entry object
 entry_test: Entry.o entry_test.o
 	$(CC) $(CFLAGS) -o entry_test Entry.o entry_test.o
 
-buffer_test: Buffer.o Entry.o buffer_test.o
-	$(CC) $(CFLAGS) -pthread -o buffer_test Buffer.o Entry.o buffer_test.o
+queue_test: TopicQueue.o Entry.o queue_test.o
+	$(CC) $(CFLAGS) -pthread -o queue_test TopicQueue.o Entry.o queue_test.o
 
-buffer_test_advanced: Buffer.o Entry.o buffer_test_advanced.o
-	$(CC) $(CFLAGS) -pthread -o buffer_test_advanced Buffer.o Entry.o buffer_test.o
+queue_test_advanced: TopicQueue.o Entry.o queue_test_advanced.o
+	$(CC) $(CFLAGS) -pthread -o queue_test_advanced TopicQueue.o Entry.o queue_test.o
 
 
 
@@ -40,8 +40,8 @@ buffer_test_advanced: Buffer.o Entry.o buffer_test_advanced.o
 Entry.o: Entry.c
 	$(CC) $(CFLAGS) -c Entry.c
 
-Buffer.o: Buffer.c
-	$(CC) $(CFLAGS) -c Buffer.c
+TopicQueue.o: TopicQueue.c
+	$(CC) $(CFLAGS) -c TopicQueue.c
 
 main.o: main.c
 	$(CC) $(CFLAGS) -c main.c
@@ -49,14 +49,14 @@ main.o: main.c
 entry_test.o: entry_test.c
 	$(CC) $(CFLAGS) -c entry_test.c
 
-buffer_test.o: buffer_test.c
-	$(CC) $(CFLAGS) -c buffer_test.c
+queue_test.o: queue_test.c
+	$(CC) $(CFLAGS) -c queue_test.c
 
-buffer_test_advanced.o: buffer_test_advanced.c
-	$(CC) $(CFLAGS) -c buffer_test_advanced.c
+queue_test_advanced.o: queue_test_advanced.c
+	$(CC) $(CFLAGS) -c queue_test_advanced.c
 
 clean: 
-	$(RM) server  log.txt *.o *~ *_test
+	$(RM) server queue_test queue_test_advanced log.txt output.txt *.o *~ *_test
 
 # To run valgrind, type 'make val-file'
 # Valgrind will run a leak check and store the
@@ -67,11 +67,11 @@ val: server
 val_entry_test: entry_test
 	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./entry_test > log.txt 2>&1
 
-val_buffer_test: buffer_test
-	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./buffer_test > log.txt 2>&1
+val_queue_test: queue_test
+	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./queue_test > log.txt 2>&1
 
-val_buffer_test_advanced: buffer_test_advanced
-	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./buffer_test_advanced > log.txt 2>&1
+val_queue_test_advanced: queue_test_advanced
+	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./queue_test_advanced > log.txt 2>&1
 
 
 
