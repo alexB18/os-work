@@ -9,6 +9,15 @@
 //sem_t mutex;
 
 /* --------------- Buffer Constructor/Destructor -------------- */
+void initializeBuffer(Buffer** Buffer){
+    // set the rest of the Buffer's attributes to default values
+    (*Buffer)->entryCount = 0;
+    (*Buffer)->head = 0;
+    (*Buffer)->tail = 0;
+    (*Buffer)->highestEntryNum = 0;
+    (*Buffer)->isFull = false;
+
+}
 Buffer* constructBuffer(){
     
     Buffer* retBuffer = (Buffer*) malloc(sizeof(Buffer));
@@ -38,16 +47,6 @@ void destroyBuffer(Buffer** Buffer){
 
     // finally, free self
     free((*Buffer));
-
-}
-
-void initializeBuffer(Buffer** Buffer){
-    // set the rest of the Buffer's attributes to default values
-    (*Buffer)->entryCount = 0;
-    (*Buffer)->head = 0;
-    (*Buffer)->tail = 0;
-    (*Buffer)->insertedCount = 0;
-    (*Buffer)->isFull = false;
 
 }
 /* ----------------------------------------------------------- */
@@ -136,11 +135,11 @@ void setBufferTailIndex(Buffer** Buffer, int tail){
     (*Buffer)->tail = tail;
 }
 
-void incrementBufferInsertedCount(Buffer** Buffer){
+void incrementBufferhighestEntryNum(Buffer** Buffer){
     /* 
         Method which increments a Buffer's inserted count.
     */
-    (*Buffer)->insertedCount ++;
+    (*Buffer)->highestEntryNum ++;
 }
 
 void incrementHeadPointer(Buffer** Buffer){
@@ -160,13 +159,19 @@ void incrementHeadPointer(Buffer** Buffer){
     setBufferHeadIndex(Buffer, (head+1) % MAXENTRIES);
 
     // Next, set Buffer's inFull boolean appropriately
+    // Will go true if the Buffer's head and tail are the same.
+    // However when initializing, the default value is false, so I will be able
+    // Put values in
     (*Buffer)->isFull = (getBufferHeadIndex(Buffer) == getBufferTailIndex(Buffer));
 }
 
-void decrementTailPointer(Buffer** Buffer){
+void incrementTailPointer(Buffer** Buffer){
 
     // First we advance the tail pointer by one...
     (*Buffer)->tail = (getBufferTailIndex(Buffer) + 1) % MAXENTRIES;
+
+    // Then we say that the Buffer isn't full
+    (*Buffer)->isFull = false;
 
 }
 
@@ -197,8 +202,8 @@ int enqueue(Buffer** Buffer, Entry** Entry){
 
     /* --------- Prep Entry to be enqued ----------*/
     // Increment inserted Count and assign said value to Entry
-    incrementBufferInsertedCount(Buffer);
-    setEntryNum(Entry, (*Buffer)->entryCount);
+    incrementBufferhighestEntryNum(Buffer);
+    setEntryNum(Entry, (*Buffer)->highestEntryNum);
 
     // Assign current time to Entry
     gettimeofday(&(*Entry)->timeStamp, NULL);
@@ -227,14 +232,14 @@ int enqueue(Buffer** Buffer, Entry** Entry){
 int dequeue(Buffer** Buffer){
 
     if(isEmpty(Buffer)){
-        fprintf(stderr, "Error! Unable to dequeu Entry: \n");
+        fprintf(stderr, "Error! Unable to dequeue Entry. Buffer is empty.\n\n");
         return -1;
     }
 
-    // Reinitialize entry and decrement tail pointer
+    // Reinitialize entry and increment tail pointer
     Entry* Entry = (*Buffer)->entries[getBufferTailIndex(Buffer)];
     initializeEntry(&Entry);
-    decrementTailPointer(Buffer);
+    incrementTailPointer(Buffer);
     return 1;
 
 }

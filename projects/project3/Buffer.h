@@ -8,7 +8,7 @@
 
 typedef struct Buffer {
     bool isFull;
-    int entryCount, head, tail, insertedCount;
+    int entryCount, head, tail, highestEntryNum;
     struct topicEntry** entries;
 } Buffer;
 
@@ -25,14 +25,14 @@ int dequeue(Buffer** Buffer);
 int getBufferEntryCount(Buffer** Buffer);
 int getBufferHeadIndex(Buffer** Buffer);
 int getBufferTailIndex(Buffer** Buffer);
-int getBufferInsertedCount(Buffer** Buffer);
+int getBufferhighestEntryNum(Buffer** Buffer);
 int getBufferSize(Buffer** Buffer);
 
 int incrementBufferEntryCount(Buffer** Buffer);
 int decrementBufferEntryCount(Buffer** Buffer);
 void setBufferHeadIndex(Buffer** Buffer, int head);
 void setBufferTailIndex(Buffer** Buffer, int tail);
-void incrementBufferInsertedCount(Buffer** Buffer);
+void incrementBufferhighestEntryNum(Buffer** Buffer);
 void incrementHeadPointer(Buffer** Buffer);
 void decrementTailPointer(Buffer** Buffer);
 /* ------------------------------------------------------------ */
