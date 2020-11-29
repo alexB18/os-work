@@ -19,7 +19,8 @@ void destroyTopicQueue(TopicQueue** TopicQueue);
 /* ------------------------------------------------------------ */
 
 int enqueue(TopicQueue** TopicQueue, Entry** Entry);
-int dequeue(TopicQueue** TopicQueue);
+int getEntry(int lastEntry, Entry** emptyEntry);
+int dequeue_tonowhere(TopicQueue** TopicQueue);
 
 /* --------------- TopicQueue Getters and Setters ----------------- */
 int getTopicQueueEntryCount(TopicQueue** TopicQueue);

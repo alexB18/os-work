@@ -191,6 +191,7 @@ int main(int argc, char **argv){
     setEntryPhotoURL(&Entry19, &Entry19_url);
     setEntryPhotoCaption(&Entry19, &Entry19_caption);
 
+    /*
     Entry* Entry20 = constructEntry();
     char* Entry20_caption = "hold onto ur butts!";
     char* Entry20_url = "https://www.google.com";
@@ -202,6 +203,7 @@ int main(int argc, char **argv){
     char* Entry21_url = "https://www.google.com";
     setEntryPhotoURL(&Entry21, &Entry21_url);
     setEntryPhotoCaption(&Entry21, &Entry21_caption);
+    */
 
 
 
@@ -250,6 +252,7 @@ int main(int argc, char **argv){
     sleep(.5);
     enqueue(&(TopicQueues[0]), &Entry19);
 
+    /*
     fprintf(stdout, "Enqueuing Entry: 20\n");
     sleep(.5);
     enqueue(&(TopicQueues[0]), &Entry20);
@@ -257,6 +260,7 @@ int main(int argc, char **argv){
     fprintf(stdout, "Enqueuing Entry: 21\n");
     sleep(.5);
     enqueue(&(TopicQueues[0]), &Entry21);
+    */
     
     
 
@@ -269,9 +273,9 @@ int main(int argc, char **argv){
     }
 
     for(int i= 0; i < 10; i++){
-        dequeue(&(TopicQueues[0]));
+        dequeue_tonowhere(&(TopicQueues[0]));
     }
-    dequeue(&(TopicQueues)[0]);
+    dequeue_tonowhere(&(TopicQueues)[0]);
 
     // Print the status of each TopicQueue
     for(int i = 0; i < NUMQUEUES; i++){
@@ -280,7 +284,7 @@ int main(int argc, char **argv){
         fprintf(stdout, "\n");
     }
 
-    //dequeue(&(TopicQueues[0]));
+    //dequeue_tonowhere(&(TopicQueues[0]));
 
     // Destroy Each TopicQueue
     for(int i = 0; i < NUMQUEUES; i++){

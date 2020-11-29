@@ -171,9 +171,9 @@ int main(int argc, char **argv){
     }
 
     for(int i= 0; i < 10; i++){
-        dequeue(&(TopicQueues[0]));
+        dequeue_tonowhere(&(TopicQueues[0]));
     }
-    dequeue(&(TopicQueues)[0]);
+    dequeue_tonowhere(&(TopicQueues)[0]);
 
     // Print the status of each TopicQueue
     for(int i = 0; i < NUMQUEUES; i++){
@@ -182,7 +182,7 @@ int main(int argc, char **argv){
         fprintf(stdout, "\n");
     }
 
-    //dequeue(&(TopicQueues[0]));
+    //dequeue_tonowhere(&(TopicQueues[0]));
 
     // Destroy Each TopicQueue
     for(int i = 0; i < NUMQUEUES; i++){

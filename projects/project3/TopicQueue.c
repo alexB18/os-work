@@ -229,7 +229,15 @@ int enqueue(TopicQueue** TopicQueue, Entry** Entry){
 
 }
 
-int dequeue(TopicQueue** TopicQueue){
+int getEntry(int lastEntry, Entry** emptyEntry){
+
+    //3 cases://
+
+    /*1. topic queue is empty, returns 0*/
+    return 0;
+}
+
+int dequeue_tonowhere(TopicQueue** TopicQueue){
 
     if(isEmpty(TopicQueue)){
         fprintf(stderr, "Error! Unable to dequeue Entry. TopicQueue is empty.\n\n");
