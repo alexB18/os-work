@@ -14,38 +14,7 @@ pthread_mutex_t mutex[NUMBUFFERS]; //mutex locks for buffers
 sem_t full[NUMBUFFERS]; // full semaphores
 sem_t empty[NUMBUFFERS]; // empty semaphores
 
-int MODE;
-
-int usage(int argc, char** argv){
-
-    if(argc == 1){
-        return 0;
-
-    } else if(argc == 2){
-
-        fprintf(stderr, 
-            "usage: %s <flag> <output file>\n", 
-            argv[0]);
-        exit(EXIT_FAILURE);
-    
-    } else if(argc == 3){
-
-        if(strcmp(argv[1], "-f") != 0){
-
-            fprintf(stderr, 
-                "usage: %s <flag> <output file>\n", 
-                argv[0]);
-            exit(EXIT_FAILURE);
-        }
-
-    }
-    return 1;
-}
-
 int main(int argc, char **argv){
-
-    // Check for correct usage
-    MODE = usage(argc, argv);
 
     Buffers = (Buffer**) malloc(NUMBUFFERS * sizeof(Buffer*));
     for(int i = 0; i < NUMBUFFERS; i++){

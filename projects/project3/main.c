@@ -68,11 +68,8 @@ int main(int argc, char **argv){
     Buffers = (Buffer**) malloc(NUMBUFFERS * sizeof(Buffer*));
     for(int i = 0; i < NUMBUFFERS; i++){
 
-        // Allocate memory for each Buffer
-        Buffers[i] = (Buffer*) malloc(sizeof(Buffer));
-
-        // Initialize each Buffer
-        initializeBuffer(&(Buffers[i]));
+        // Construct each Buffer
+        Buffers[i] = constructBuffer();
     }
 
     // Create the buffer semaphores
