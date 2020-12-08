@@ -19,26 +19,26 @@ default: server queue_test queue_test_advanced entry_test
 # To create the executable file count we need the object file(s)
 # part1.o:
 #
-server:  threads.o main.o
-	$(CC) $(CFLAGS) -pthread -o server threads.o main.o
+server:  topic_store.o main.o
+	$(CC) $(CFLAGS) -pthread -o server topic_store.o main.o
 
 # Rule for testing just the Entry object
-entry_test: threads.o entry_test.o
-	$(CC) $(CFLAGS) -pthread -o entry_test threads.o entry_test.o
+entry_test: topic_store.o entry_test.o
+	$(CC) $(CFLAGS) -pthread -o entry_test topic_store.o entry_test.o
 
-queue_test: threads.o queue_test.o
-	$(CC) $(CFLAGS) -pthread -o queue_test threads.o queue_test.o
+queue_test: topic_store.o queue_test.o
+	$(CC) $(CFLAGS) -pthread -o queue_test topic_store.o queue_test.o
 
-queue_test_advanced: threads.o queue_test_advanced.o
-	$(CC) $(CFLAGS) -pthread -o queue_test_advanced threads.o queue_test.o
+queue_test_advanced: topic_store.o queue_test_advanced.o
+	$(CC) $(CFLAGS) -pthread -o queue_test_advanced topic_store.o queue_test.o
 
 
 
 # To create the object file entries.o, we need the source
 # file(s) entries.c and the header file entries.h:
 #
-threads.o: threads.c
-	$(CC) $(CFLAGS) -c threads.c
+topic_store.o: topic_store.c
+	$(CC) $(CFLAGS) -c topic_store.c
 
 main.o: main.c
 	$(CC) $(CFLAGS) -c main.c
