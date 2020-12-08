@@ -4,7 +4,7 @@
 #include <semaphore.h>
 #include <sys/time.h>
 #include <string.h>
-#include "TopicQueue.h"
+#include "threads.h"
 
 #define NUMQUEUES 5
 
@@ -69,7 +69,7 @@ int main(int argc, char **argv){
     for(int i = 0; i < NUMQUEUES; i++){
 
         // Construct each TopicQueue
-        TopicQueues[i] = constructTopicQueue();
+        TopicQueues[i] = constructTopicQueue(-1, "NULL", MAXENTRIES);
     }
 
     // Create the TopicQueue semaphores

@@ -19,29 +19,26 @@ default: server queue_test queue_test_advanced entry_test
 # To create the executable file count we need the object file(s)
 # part1.o:
 #
-server:  Entry.o TopicQueue.o main.o
-	$(CC) $(CFLAGS) -pthread -o server Entry.o TopicQueue.o main.o
+server:  threads.o main.o
+	$(CC) $(CFLAGS) -pthread -o server threads.o main.o
 
 # Rule for testing just the Entry object
-entry_test: Entry.o entry_test.o
-	$(CC) $(CFLAGS) -o entry_test Entry.o entry_test.o
+entry_test: threads.o entry_test.o
+	$(CC) $(CFLAGS) -pthread -o entry_test threads.o entry_test.o
 
-queue_test: TopicQueue.o Entry.o queue_test.o
-	$(CC) $(CFLAGS) -pthread -o queue_test TopicQueue.o Entry.o queue_test.o
+queue_test: threads.o queue_test.o
+	$(CC) $(CFLAGS) -pthread -o queue_test threads.o queue_test.o
 
-queue_test_advanced: TopicQueue.o Entry.o queue_test_advanced.o
-	$(CC) $(CFLAGS) -pthread -o queue_test_advanced TopicQueue.o Entry.o queue_test.o
+queue_test_advanced: threads.o queue_test_advanced.o
+	$(CC) $(CFLAGS) -pthread -o queue_test_advanced threads.o queue_test.o
 
 
 
 # To create the object file entries.o, we need the source
 # file(s) entries.c and the header file entries.h:
 #
-Entry.o: Entry.c
-	$(CC) $(CFLAGS) -c Entry.c
-
-TopicQueue.o: TopicQueue.c
-	$(CC) $(CFLAGS) -c TopicQueue.c
+threads.o: threads.c
+	$(CC) $(CFLAGS) -c threads.c
 
 main.o: main.c
 	$(CC) $(CFLAGS) -c main.c

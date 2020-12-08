@@ -4,7 +4,7 @@
 #include <semaphore.h>
 #include <sys/time.h>
 #include <string.h>
-#include "TopicQueue.h"
+#include "threads.h"
 
 #define NUMQUEUES 1
 
@@ -72,7 +72,7 @@ int main(int argc, char **argv){
     for(int i = 0; i < NUMQUEUES; i++){
 
         // Allocate memory for each TopicQueue
-        TopicQueues[i] = constructTopicQueue();
+        TopicQueues[i] = constructTopicQueue(-1, "NULL", MAXENTRIES);
     }
 
     // Create the TopicQueue semaphores
@@ -171,9 +171,9 @@ int main(int argc, char **argv){
     }
 
     for(int i= 0; i < 10; i++){
-        dequeue_tonowhere(&(TopicQueues[0]));
+        dequeue(&(TopicQueues[0]), 100);
     }
-    dequeue_tonowhere(&(TopicQueues)[0]);
+    dequeue(&(TopicQueues)[0], 100);
 
     // Print the status of each TopicQueue
     for(int i = 0; i < NUMQUEUES; i++){
