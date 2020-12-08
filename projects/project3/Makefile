@@ -19,8 +19,8 @@ default: server queue_test queue_test_advanced entry_test
 # To create the executable file count we need the object file(s)
 # part1.o:
 #
-server:  topic_store.o main.o
-	$(CC) $(CFLAGS) -pthread -o server topic_store.o main.o
+server:  topic_store.o quack.o
+	$(CC) $(CFLAGS) -pthread -o server topic_store.o quack.o
 
 # Rule for testing just the Entry object
 entry_test: topic_store.o entry_test.o
@@ -40,8 +40,8 @@ queue_test_advanced: topic_store.o queue_test_advanced.o
 topic_store.o: topic_store.c
 	$(CC) $(CFLAGS) -c topic_store.c
 
-main.o: main.c
-	$(CC) $(CFLAGS) -c main.c
+quack.o: quack.c
+	$(CC) $(CFLAGS) -c quack.c
 
 entry_test.o: entry_test.c
 	$(CC) $(CFLAGS) -c entry_test.c

@@ -30,6 +30,11 @@
 #define MAXNAMESIZE 1024
 #endif
 
+
+#ifndef MAXTOPICS
+#define MAXTOPICS 20
+#endif
+
 typedef struct topicEntry{
     int entryNum;
     struct timeval timeStamp;

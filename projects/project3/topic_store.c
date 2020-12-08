@@ -142,6 +142,8 @@ TopicQueue* constructTopicQueue(int id, char* topicName, int size){
         retTopicQueue->entries[i] = constructEntry();
     }
 
+    retTopicQueue->id = id;
+
     // Copy over new name
     strcpy(retTopicQueue->name, topicName);
     // Set desired TopicQueue length (this is usually MAXENTRIES)
@@ -539,10 +541,9 @@ int dequeue(TopicQueue** TopicQueue, suseconds_t delta){
 
 void printLimitedTopicQueueStatus(TopicQueue** TopicQueue){
 
-    fprintf(stdout, "Entry Count: %i\n", getTopicQueueEntryCount(TopicQueue));
+    fprintf(stdout, "Entry Count: %i\n", getTopicQueueEntryCount(TopicQueue) - 1);
     fprintf(stdout, "Head Index: %i\n", getTopicQueueHeadIndex(TopicQueue));
     fprintf(stdout, "Tail Index: %i\n", getTopicQueueTailIndex(TopicQueue));
-    fprintf(stdout, "Entry Count: %i\n", getTopicQueueEntryCount(TopicQueue));
 
 }
 

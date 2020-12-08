@@ -5,7 +5,7 @@
 #include <semaphore.h>
 #include <sys/time.h>
 #include <string.h>
-#include "threads.h"
+#include "topic_store.h"
 
 #define NUMQUEUES 1
 
