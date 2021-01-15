@@ -14,13 +14,13 @@ CFLAGS  = -g -Wall
 # you can name this target entry anything, but "default" or "all"
 # are the most commonly used names by convention
 #
-default: server queue_test queue_test_advanced entry_test
+default: server queue_test entry_test
 
 # To create the executable file count we need the object file(s)
 # part1.o:
 #
-server:  topic_store.o quack.o
-	$(CC) $(CFLAGS) -pthread -o server topic_store.o quack.o
+server:  topic_store.o quacker.o
+	$(CC) $(CFLAGS) -pthread -o server topic_store.o quacker.o
 
 # Rule for testing just the Entry object
 entry_test: topic_store.o entry_test.o
@@ -28,9 +28,6 @@ entry_test: topic_store.o entry_test.o
 
 queue_test: topic_store.o queue_test.o
 	$(CC) $(CFLAGS) -pthread -o queue_test topic_store.o queue_test.o
-
-queue_test_advanced: topic_store.o queue_test_advanced.o
-	$(CC) $(CFLAGS) -pthread -o queue_test_advanced topic_store.o queue_test.o
 
 
 
@@ -40,17 +37,14 @@ queue_test_advanced: topic_store.o queue_test_advanced.o
 topic_store.o: topic_store.c
 	$(CC) $(CFLAGS) -c topic_store.c
 
-quack.o: quack.c
-	$(CC) $(CFLAGS) -c quack.c
+quacker.o: quacker.c
+	$(CC) $(CFLAGS) -c quacker.c
 
 entry_test.o: entry_test.c
 	$(CC) $(CFLAGS) -c entry_test.c
 
 queue_test.o: queue_test.c
 	$(CC) $(CFLAGS) -c queue_test.c
-
-queue_test_advanced.o: queue_test_advanced.c
-	$(CC) $(CFLAGS) -c queue_test_advanced.c
 
 clean: 
 	$(RM) server queue_test queue_test_advanced log.txt output.txt *.o *~ *_test
@@ -59,16 +53,13 @@ clean:
 # Valgrind will run a leak check and store the
 # results in log.txt
 val: server
-	valgrind -v --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./server > log.txt 2>&1
+	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./server > log.txt 2>&1
 
 val_entry_test: entry_test
 	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./entry_test > log.txt 2>&1
 
 val_queue_test: queue_test
 	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./queue_test > log.txt 2>&1
-
-val_queue_test_advanced: queue_test_advanced
-	valgrind --leak-check=full --show-leak-kinds=all --tool=memcheck --track-origins=yes ./queue_test_advanced > log.txt 2>&1
 
 
 

@@ -5,7 +5,7 @@
 #include <pthread.h>
 #include <signal.h>
 #include <time.h>
-#include "quack.h"
+#include "quacker.h"
 
 TopicQueue* Topic0;
 
@@ -42,24 +42,29 @@ void destroyThreadPool(ThreadPool* Pool){
 void* pub(void* publisherPool_VOID){
    struct timespec waitTime;
    waitTime.tv_sec = 0;
-   int pubError = 0;
+   int enqueueStatus = 0;
 
    fprintf(stdout, "Pub thread: (%li) here\n", pthread_self());
 
+   //Entrys for test
    Entry* newEntry = constructEntry();
-   char* newEntry_caption = "test";
-   char* newEntry_URL = "https://www.google.com";
+   char* newEntry_caption = "hold onto ur butts!";
+   char* newEntry_url = "https://www.google.com";
+   setEntryPhotoURL(&newEntry, &newEntry_url);
    setEntryPhotoCaption(&newEntry, &newEntry_caption);
-   setEntryPhotoURL(&newEntry, &newEntry_URL);
    newEntry->pubID = pthread_self();
+   //printEntryStatus(&newEntry);
+  // newEntry->timeStamp = 
 
    // Sometimes the publisher might be unable to push to a full queue
    // So, let's continuously try, and give a bit of waiting time after each go
    for(int i = 0; i < 30; i++){
-      pubError = enqueue(&Topic0, &newEntry);
+      enqueueStatus = enqueue(&Topic0, &newEntry);
+      printf("here!\n");
       // If it worked, report so and break
-      if(pubError == 1){
+      if(!enqueueStatus){
          fprintf(stdout, "Publisher: %ld enqueued Entry to topic: %d\n", pthread_self(), Topic0->id);
+         break;
       }
       
       // otherwise, try again after 50 ms
@@ -68,8 +73,8 @@ void* pub(void* publisherPool_VOID){
    }
 
    // If after all this time, we've still failed, print an error
-   if(pubError == 0){
-      fprintf(stderr, "ERROR, Publisher: %ld unable to enqueue Entry to topid: %d\n", pthread_self(), Topic0->id);
+   if(enqueueStatus){
+      fprintf(stderr, "ERROR, Publisher: %ld unable to enqueue Entry to to Topic id: %d\n", pthread_self(), Topic0->id);
    }
 
    // Since enqueue copies an existing Entry, we need to destroy newEntry
@@ -112,7 +117,7 @@ void* pub(void* publisherPool_VOID){
 void* sub(void* subscriberPool_VOID){
    struct timespec waitTime;
    waitTime.tv_sec = 0;
-   int subError = 0;
+   int getEntryStatus = 0;
 
    fprintf(stdout, "Sub thread: (%li) here\n", pthread_self());
 
@@ -123,9 +128,9 @@ void* sub(void* subscriberPool_VOID){
    // Sometimes the subscriber might be unable to pull from an empty queue
    // So, let's continuously try, and give a bit of waiting time after each go
    for(int i = 0; i < 30; i++){
-      subError = getEntry(&Topic0, Topic0->highestEntryNum, &grabbedEntry);
+      getEntryStatus = getEntry(&Topic0, Topic0->highestEntryNum, &grabbedEntry);
       // If it worked, report so and break
-      if(subError == 1){
+      if(!getEntryStatus){
          fprintf(stdout, "Subscriber: %ld pulled Entry %d,\nURL: %s\nCaption: %s\n", pthread_self(), grabbedEntry->entryNum, grabbedEntry->photoURL, grabbedEntry->photoCaption);
          break;
       
@@ -135,7 +140,7 @@ void* sub(void* subscriberPool_VOID){
       nanosleep(&waitTime, NULL);
    }
 
-   if(subError == 0){
+   if(getEntryStatus){
       fprintf(stderr, "ERROR, Subscriber: %ld unable to pull latest Entry from Topic: %d.\n", pthread_self(), Topic0->id);
    }
 
@@ -165,7 +170,7 @@ int spawnSubs(ThreadPool* Pool){
 // Subscriber Spawning function
 int spawnPubs(ThreadPool* Pool){
 
-   for(int i = 0 ; i < MAXWORKING; i++){
+   for(int i = 0 ; i < MAXPUBLISHERS; i++){
       pthread_create(&Pool->threads[i], NULL, &pub, NULL);
    }
 
@@ -195,6 +200,8 @@ int main(){
 
    // Waait for pubs/subs to finish then destroy
    destroyThreadPool(&pubPool);
+   printFullTopicQueueStatus(&Topic0);
+   sleep(3);
    destroyThreadPool(&subPool);
 
    printFullTopicQueueStatus(&Topic0);

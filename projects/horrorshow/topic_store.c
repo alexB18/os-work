@@ -13,7 +13,7 @@ void initializeEntry(Entry** Entry){
 
     // get execution time
     struct timeval executionTime = (struct timeval){0};
-    //gettimeofday(&executionTime, NULL);
+    gettimeofday(&executionTime, NULL);
 
     char* photoURL_EMPTY = "NULL";
     char* photoCaption_EMPTY = "NULL";
@@ -124,7 +124,7 @@ void printEntryStatus(Entry** Entry){
 void initializeTopicQueue(TopicQueue** TopicQueue){
     // set the rest of the TopicQueue's attributes to default values
     (*TopicQueue)->entryCount = 0;
-    (*TopicQueue)->head = 0;
+    (*TopicQueue)->head = -1;
     (*TopicQueue)->tail = 0;
     (*TopicQueue)->highestEntryNum = 0;
     (*TopicQueue)->isFull = false;
@@ -151,16 +151,13 @@ TopicQueue* constructTopicQueue(int id, char* topicName, int size){
 
     //set TopicQueue to start empty
     initializeTopicQueue(&retTopicQueue);
-    retTopicQueue->entryCount = 1;
-    retTopicQueue->head = -1;
-    retTopicQueue->tail = 0;
 
     // Set up mutex
     pthread_mutexattr_t attr;
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_setrobust(&attr, PTHREAD_MUTEX_ROBUST);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
-    pthread_mutex_init(&(retTopicQueue->lock), &attr);
+    pthread_mutex_init(&retTopicQueue->lock, &attr);
     pthread_mutexattr_destroy(&attr);
 
     // return TopicQueue
@@ -326,21 +323,24 @@ int enqueue(TopicQueue** TopicQueue, Entry** Entry){
     int head = (*TopicQueue)->head;
     int tail = (*TopicQueue)->tail;
 
-    // If TopicQueue is empty, we need to set head/tail values to 0
+    // If TopicQueue is full, we need to set head/tail values to 0
     if(head == -1){
         (*TopicQueue)->head = 0;
         (*TopicQueue)->tail = 0;
     
-    // If the TopicQueue isn't empty, but isn't full, we can simply increment the tail
+    // If the TopicQueue isn't full, but isn't empty, we can simply increment the tail
     } else if((tail+1) % (*TopicQueue)->size == head){
+
+        // DEBUG
 
         // If incrementing the tail makes it equal to max size, wrap around and assign tail to 0
         if(tail +1 == (*TopicQueue)->size){
             (*TopicQueue)->tail = 0;
         
         } else {
-            (*TopicQueue)->tail ++;
+            (*TopicQueue)->tail = (*TopicQueue)->tail + 1;
         }
+
     
     // If the TopicQueue is full, we set the appropriate variable
     } else {
@@ -353,15 +353,17 @@ int enqueue(TopicQueue** TopicQueue, Entry** Entry){
         returnVal = 0;
     
     } else {
+        // Set appropriate photoURL and photoCaption
+        strcpy((*TopicQueue)->entries[(*TopicQueue)->tail]->photoCaption, (*Entry)->photoCaption); 
+        strcpy((*TopicQueue)->entries[(*TopicQueue)->tail]->photoURL, (*Entry)->photoURL); 
+        
         // Assign new Entry a number equal to the monotomically increasing entryCount
         (*TopicQueue)->entries[(*TopicQueue)->tail]->entryNum = (*TopicQueue)->entryCount;
         (*TopicQueue)->entryCount++;
         // Update time stamp for new Entry
         gettimeofday(&(*TopicQueue)->entries[(*TopicQueue)->tail]->timeStamp, NULL);
         (*TopicQueue)->entries[(*TopicQueue)->tail]->pubID = (*Entry)->pubID;
-        // Set appropriate photoURL and photoCaption
-        strcpy((*TopicQueue)->entries[(*TopicQueue)->tail]->photoCaption, (*Entry)->photoCaption); 
-        strcpy((*TopicQueue)->entries[(*TopicQueue)->tail]->photoURL, (*Entry)->photoURL); 
+
 
         // Since everything is good, set returnVal to 1
         returnVal = 1;
@@ -378,7 +380,7 @@ int getEntry(TopicQueue** TopicQueue, int lastEntry, Entry** emptyEntry){
     // Keeps track of whether or not the next entry to retrieve is in the queue
     int entryFound = 0;
 
-    int entryCount, returnVal, currentIndex, i;
+    int entryCount, returnVal, currentIndex;
 
     // Lock up the TopicQueue before changing stuff
     pthread_mutex_lock(&(*TopicQueue)->lock);
@@ -401,7 +403,7 @@ int getEntry(TopicQueue** TopicQueue, int lastEntry, Entry** emptyEntry){
     } else {
 
         // Look through all entries
-        for(i = 0; i < entryCount; i ++){
+        for(int i = 0; i < entryCount; i ++){
             currentIndex = ((*TopicQueue)->head + i) % (*TopicQueue)->size;
             
             // If there's an entry who's entryNum == lastEntry + 1, then we've found it
@@ -430,7 +432,7 @@ int getEntry(TopicQueue** TopicQueue, int lastEntry, Entry** emptyEntry){
         there are 2 possible sub-cases:*/
         } else {
 
-            for(i = 0; i < entryCount; i++){
+            for(int i = 0; i < entryCount; i++){
                 currentIndex = ((*TopicQueue)->head + i) % (*TopicQueue)->size;
                 if((*TopicQueue)->entries[currentIndex]->entryNum > lastEntry + 1){
                     entryFound = 1;
@@ -541,7 +543,10 @@ int dequeue(TopicQueue** TopicQueue, suseconds_t delta){
 
 void printLimitedTopicQueueStatus(TopicQueue** TopicQueue){
 
-    fprintf(stdout, "Entry Count: %i\n", getTopicQueueEntryCount(TopicQueue) - 1);
+    fprintf(stdout, "\n");
+    fprintf(stdout, "Queue id: [%i]\n", (*TopicQueue)->id);
+    fprintf(stdout, "Name: %s\n", (*TopicQueue)->name);
+    fprintf(stdout, "Entry Count: %i\n", getTopicQueueEntryCount(TopicQueue));
     fprintf(stdout, "Head Index: %i\n", getTopicQueueHeadIndex(TopicQueue));
     fprintf(stdout, "Tail Index: %i\n", getTopicQueueTailIndex(TopicQueue));
 

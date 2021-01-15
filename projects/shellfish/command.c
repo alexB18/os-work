@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 
 /* Helper function for counting number of characters in a string */
 ssize_t numCharacters(char* inputStr){
@@ -81,6 +82,11 @@ void showCurrentDir(){
     // Free allocated memory
     free(pathBufferPtr);
 
+}
+
+/*for the cls command*/
+void clearScreen(){
+    system("clear");
 }
 
 /*for the mkdir command*/

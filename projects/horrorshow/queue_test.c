@@ -64,12 +64,14 @@ int main(int argc, char **argv){
         TopicQueues[i] = constructTopicQueue(-1, "NULL", MAXENTRIES);
     }
 
+/*
     // Create the TopicQueue semaphores
     for(int i = 0; i < NUMQUEUES; i++){
-        pthread_mutex_init(&(mutex[i]), NULL);
+        //pthread_mutex_init(&(mutex[i]), NULL);
         sem_init(&full[i], 0, 0);
         sem_init(&empty[i], 0, MAXENTRIES);
     }
+    */
 
     
     //10 Entries for test
@@ -85,7 +87,6 @@ int main(int argc, char **argv){
     char* Entry1_url = "https://www.google.com";
     setEntryPhotoURL(&Entry1, &Entry1_url);
     setEntryPhotoCaption(&Entry1, &Entry1_caption);
-    enqueue(&(TopicQueues[0]), &Entry1);
     
     Entry* Entry2 = constructEntry();
     char* Entry2_caption = "hold onto ur butts!";
@@ -317,6 +318,4 @@ int main(int argc, char **argv){
         destroyTopicQueue(&(TopicQueues[i]));
     }
     free(TopicQueues);
-
-
 }

@@ -39,7 +39,7 @@
 int MODE;
 // Pointer which will hold an array of all valid commands
 char** VALID_COMMANDS;
-int NUM_OF_COMMANDS = 9;
+int NUM_OF_COMMANDS = 10;
 
 /*--------------------------- Helper Functions ------------------------------*/
 
@@ -203,6 +203,8 @@ void execUnixCmd(char** command, int args){
 			displayFile(command[1]);
 		}
 
+	} else if(strcmp(command[0], "cls") == 0){
+		clearScreen();
 	} else {
 		fprintf(stdout, "Unrecognized command.\n");
 	}
@@ -227,6 +229,7 @@ int main(int argc, char** argv) {
 	VALID_COMMANDS[6] = "rm";
 	VALID_COMMANDS[7] = "cat";
 	VALID_COMMANDS[8] = "exit";
+	VALID_COMMANDS[9] = "cls";
 
 	/* Main Function Variables */
 	int CONTINUE = 1;

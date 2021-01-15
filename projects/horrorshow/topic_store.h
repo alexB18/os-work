@@ -14,14 +14,6 @@
 #define CAPSIZE 512 // Caption String length
 #endif
 
-#ifndef URLSIZE
-#define URLSIZE 256 // URL String length
-#endif
-
-#ifndef CAPSIZE
-#define CAPSIZE 512 // Caption String length
-#endif
-
 #ifndef MAXENTRIES
 #define MAXENTRIES 10  // TopicQueue size
 #endif

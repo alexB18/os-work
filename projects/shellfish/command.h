@@ -14,6 +14,8 @@ void listDir(); /*for the ls command*/
 
 void showCurrentDir(); /*for the pwd command*/
 
+void clearScreen(); /*for the cls command*/
+
 void makeDir(char *dirName); /*for the mkdir command*/
 
 void changeDir(char *dirName); /*for the cd command*/
